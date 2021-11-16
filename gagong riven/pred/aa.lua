@@ -9,7 +9,7 @@ local get_spell_state = function()
 end
 
 local invoke_action = function(pause)
-  player:attack(res.obj)
+  player:attack( )
   if pause then
     orb.core.set_server_pause()
   end
