@@ -6,7 +6,6 @@ local r2 = {
   last_cast = 0,
   last_start_pos = vec2(0,0),
   last_end_pos = vec2(0,0),
-  
   delay = 0.25,
   speed = 1600,
   width = 5,
