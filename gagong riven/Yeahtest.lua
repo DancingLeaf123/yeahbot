@@ -31,9 +31,6 @@ local function on_tick()
 end
 
 
-
-
-
 cb.add(cb.tick, on_tick)
 cb.add(cb.tick, yeahztest2)
 
