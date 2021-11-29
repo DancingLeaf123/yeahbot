@@ -1,9 +1,13 @@
 local orb = module.internal('orb')
-
 local menu = module.load(header.id, 'menu')
 
-local core = module.load(header.id, 'core/main')
 local spell = module.load(header.id, 'spell/main')
+
+local core = module.load(header.id, 'core/main')
+
+
+local Yeahtest = module.load(header.id, 'Yeahtest')
+
 
 orb.combat.register_f_pre_tick(function()
   spell.r2.on_update_buff()
@@ -43,3 +47,6 @@ cb.add(cb.draw, on_draw)
 cb.add(cb.spell, on_recv_spell)
 --cb.add(cb.path, on_new_path)
 cb.add(cb.create_particle, on_create_obj)
+
+
+-- yeahz code here
