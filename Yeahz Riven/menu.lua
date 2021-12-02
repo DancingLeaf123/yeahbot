@@ -34,5 +34,6 @@ menu:slider('e_double_cast_weight', 'Close combat double cast weight', 100, 0, 1
 menu:keybind('e_aa', 'Consider E[+?]->[AA->[?]]', nil, 'T')
 menu:keybind('r1', 'Use R1 in next combo', nil, 'C')
 menu:keybind('combat', 'Combat key', 'Space', nil)
+menu:keybind('flee', 'Flee key', 'Z', nil)
 
 return menu

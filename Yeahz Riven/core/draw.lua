@@ -320,7 +320,7 @@ local r1 = function()
     end
   end
 end
-
+ 
 local str = 'Consider E[+?]->[AA->[?]]'
 local dx = graphics.text_area(str, 15)
 local e_aa = function()
