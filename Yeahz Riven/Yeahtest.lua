@@ -51,7 +51,7 @@ local function on_tick()
         -- local pos, is_grass = navmesh.wall_drop_pos(mousePos2D)
         -- print(mousePos2D.x,mousePos2D.y)
         -- print(pos.x,pos.y)
-        -- print(mousePos.x,mousePos.y,mousePos.z)
+        print(mousePos.x,mousePos.y,mousePos.z)
         -- print(player.pos .x,mousePos.y,mousePos.z)
         -- print("player.direction",player.direction.x,player.direction.y,player.direction.z)
         -- print("player.direction2D",player.direction2D)
@@ -86,10 +86,14 @@ end
 -- [09:22] player.path.dashSpeed   783.8037109375
 -- [09:22] s       0.31895740797269
 
+-- [06:27] spell.startPos  9190    53.026031494141 7200
+-- [06:27] spell.endPos    8977.4853515625 53.056053161621
+-- 6953.486328125
+
 local function on_process_spell(spell)
     if spell.owner==player and spell.slot==2 then
         print("spell.startPos",spell.startPos.x,spell.startPos.y,spell.startPos.z)
-        print("spell.startPos",spell.startPos2D.x,spell.startPos2D.y,spell.startPos2D.z)
+        print("spell.endPos",spell.endPos.x,spell.endPos.y,spell.endPos.z)
         if player.path.isDashing then
             print("player.path.dashSpeed", player.path.dashSpeed)
             local s = 250 / player.path.dashSpeed
@@ -137,20 +141,64 @@ local flee = function ()
     end
 end
 
+local delayedActions, delayedActionsExecuter = {}, nil
+
+local function DelayAction(func, delay, args)
+    if not delayedActionsExecuter then
+        function delayedActionsExecuter()
+            for t, funcs in pairs(delayedActions) do
+                if t <= game.time then
+                    for i = 1, #funcs do
+                        local f = funcs[i]
+                        if f and f.func then
+                            f.func(unpack(f.args or {}))
+                        end
+                    end
+                    delayedActions[t] = nil
+                end
+            end
+        end
+        cb.add(cb.tick, delayedActionsExecuter)
+    end
+    local t = game.time + (delay or 0)
+    if delayedActions[t] then
+        delayedActions[t][#delayedActions[t] + 1] = {func = func, args = args}
+    else
+        delayedActions[t] = {{func = func, args = args}}
+    end
+end
+
+
+
 local walljump = function ()
     if menu.flee:get() then
         local slot = player:spellSlot(0)
+        -- local pp = player.pos + (player.direction - player.pos):norm() * 850
+        local pp = vec3(8977.4853515625,53.056053161621,6953.486328125)
+        local ppp = (player.direction):norm() * 350
         print(slot.stacks)
+        print("pp",pp.x,pp.y,pp.z)
+        print("ppp",ppp.x,ppp.y,ppp.z)
         local q = pred.q.get_spell_state()
         local e = pred.e.get_spell_state()
         local pos = vec3(9190.0234375,53.026031494141,7198.9057617188)
-        player:move(pos)
-        if slot.stacks == 2 and player.pos == pos then
+        if player.pos ~= pos then
+            player:move(pos)
+        end 
+        print("player.pos",player.pos.x,player.pos.y,player.pos.z)
+        print("player.pos:dist(pos)",player.pos:dist(pos))
+        graphics.draw_circle(pos, 3, 1, 0xFFFFFFFF, 16) 
+        graphics.draw_circle(pp, 3, 1, 0xFFFFFFFF, 16)
+        if slot.stacks == 2 and player.pos:dist(pos) < 1.1 then
             if e then
-                player:castSpell('pos', 2, vec3(mousePos.x,mousePos.y,mousePos.z))
+                player:castSpell('pos', 2, pp)
+                -- DelayAction(function() player:castSpell('pos', 2, pp) end,0.01)
             end
-            player:castSpell('pos', 0, vec3(mousePos.x,mousePos.y,mousePos.z))
         end
+        if not e and slot.stacks == 2 then
+            -- graphics.draw_circle(player.pos, 3, 1, 0xFFFFFFFF, 16)
+            DelayAction(function() player:castSpell('pos', 0, pp) end,0.1)
+        end  
     end
 end
 
