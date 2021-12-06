@@ -348,7 +348,7 @@ local general = function()
       end
       return true
     end 
-    if (menu.gap_e_w:get() or ooc < 0.75) and e_q then
+    if (menu.gap_e_q:get() or ooc < 0.75) and e_q then
       if not pred.w.get_spell_state() then
         pred.e_q.invoke_action(true)
         if menu.r1:get() and pred.r1.get_action_state() then
