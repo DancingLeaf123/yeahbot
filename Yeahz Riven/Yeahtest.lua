@@ -12,7 +12,7 @@ local items = module.internal('items')
 local tick_n = 0
 local function on_tick()
     tick_n = tick_n + 1
-    if tick_n == 300 then
+    if tick_n == 200 then
 
         -- print("e.slot.cooldown", e.slot.cooldown)
         -- print("e.slot.state", e.slot.state ) 
@@ -48,11 +48,17 @@ local function on_tick()
         -- print("q.obj.ptr",q.obj.ptr)
         -- print("isWall", navmesh.isWall(mousePos))
         -- print("isStructure", navmesh.isStructure(mousePos))
-        -- local pos, is_grass = navmesh.wall_drop_pos(mousePos2D)
+        local pos, is_grass = navmesh.wall_drop_pos(mousePos2D)
         -- print(mousePos2D.x,mousePos2D.y)
         -- print(pos.x,pos.y)
-        print(mousePos.x,mousePos.y,mousePos.z)
-        -- print(player.pos .x,mousePos.y,mousePos.z)
+        local notwallpos = vec3(pos.x,mousePos.y,pos.y)
+        print("mousePos",mousePos.x,mousePos.y,mousePos.z)
+        print("player.pos",player.pos.x,player.pos.y,player.pos.z)
+        print("notwallpos",notwallpos.x,notwallpos.y,notwallpos.z)
+        local a = mousePos:dist(player.pos)
+        local b = notwallpos:dist(player.pos)
+        print("mouse to player dist",a)
+        print("notwallpos to player dist",b)
         -- print("player.direction",player.direction.x,player.direction.y,player.direction.z)
         -- print("player.direction2D",player.direction2D)
 
@@ -112,6 +118,31 @@ local buff_active = function(name)
       end
     end
 end
+-- [08:39] spell.startPos  10622.56640625  35.513870239258
+-- 3475.2634277344
+-- [08:39] spell.endPos    10104.634765625 -71.2406005859384047.8559570313
+-- [08:39] mousePos        10078.6640625   -71.2404785156254054.9067382813
+-- [08:39] player.pos      10549.985351563 41.717750549316
+-- 3555.3498535156
+-- [08:39] notwallpos      10048.895507813 -71.2404785156254032.755859375
+-- [08:39] mouse to player dist    696.03189593133
+-- [08:39] notwallpos to player dist       701.26106939819
+-- [08:39] 3
+-- [08:39] player.path.dashSpeed   1199.4805908203
+-- [08:39] s       0.20842354758657
+-- [08:42] mousePos        10129.559570313 -71.24072265625
+-- 4024.4765625
+-- [08:42] player.pos      10652.224609375 35.130912780762
+-- 3499.001953125
+-- [08:42] notwallpos      10098.895507813 -71.24072265625
+-- 3982.755859375
+-- [08:42] mouse to player dist    748.74376991168
+-- [08:42] notwallpos to player dist       742.63440620109
+-- [08:42] 3
+-- [08:42] spell.startPos  10623.758789063 35.631958007813
+-- 3499.5078125
+-- [08:42] spell.endPos    10110.14453125  -71.2406005859384024.4760742188
+
 
 
 local flee = function ()
@@ -170,26 +201,39 @@ end
 
 
 
-local walljump = function ()
+ 
+-- [56:48] spell.startPos  8625.93359375, -71.240600585938, 6568.5268554688
+-- [56:48] spell.endPos    8956.9736328125 53.059989929199
+-- 6943.0625
+
+
+
+-- [33:27] spell.startPos  10019.404296875 -71.240600585938 4044.154296875
+-- [33:27] spell.endPos    10675.758789063 29.564165115356
+
+-- [33:31] spell.startPos  9971.3828125    -71.240600585938 4058.9038085938
+-- [33:31] spell.endPos    10618.94921875  34.361785888672
+-- 3457.1430664063
+ 
+local walljumpback = function ()
     if menu.flee:get() then
         local slot = player:spellSlot(0)
         -- local pp = player.pos + (player.direction - player.pos):norm() * 850
-        local pp = vec3(8977.4853515625,53.056053161621,6953.486328125)
+        -- local pp = vec3(10110.14453125,-71.240600585938,4024.4760742188)
+        local pp = vec3(10618.94921875,34.361785888672,3457.1430664063)
         local ppp = (player.direction):norm() * 350
-        print(slot.stacks)
-        print("pp",pp.x,pp.y,pp.z)
-        print("ppp",ppp.x,ppp.y,ppp.z)
         local q = pred.q.get_spell_state()
         local e = pred.e.get_spell_state()
-        local pos = vec3(9190.0234375,53.026031494141,7198.9057617188)
+        -- local pos = vec3(10623.758789063, 35.631958007813, 3499.5078125) 
+        local pos = vec3(9971.3828125,-71.240600585938, 4058.9038085938)
+        graphics.draw_circle(pos, 3, 1, 0xFFFFFFFF, 16)
         if player.pos ~= pos then
             player:move(pos)
         end 
         print("player.pos",player.pos.x,player.pos.y,player.pos.z)
         print("player.pos:dist(pos)",player.pos:dist(pos))
-        graphics.draw_circle(pos, 3, 1, 0xFFFFFFFF, 16) 
-        graphics.draw_circle(pp, 3, 1, 0xFFFFFFFF, 16)
-        if slot.stacks == 2 and player.pos:dist(pos) < 1.1 then
+        if slot.stacks == 2 and player.pos:dist(pos) < 2  then
+            print("dist good")
             if e then
                 player:castSpell('pos', 2, pp)
                 -- DelayAction(function() player:castSpell('pos', 2, pp) end,0.01)
@@ -197,18 +241,42 @@ local walljump = function ()
         end
         if not e and slot.stacks == 2 then
             -- graphics.draw_circle(player.pos, 3, 1, 0xFFFFFFFF, 16)
-            DelayAction(function() player:castSpell('pos', 0, pp) end,0.1)
+            -- player:castSpell('pos', 0, pp)
+            DelayAction(function() player:castSpell('pos', 0, pp) end,0.1) 
         end  
     end
 end
 
+-- [08:42] spell.startPos  10623.758789063 35.631958007813
+-- 3499.5078125
+-- [08:42] spell.endPos    10110.14453125,  -71.240600585938,4024.4760742188
+
 orb.combat.register_f_pre_tick(function()
-    walljump()
+    -- walljump()
+    walljumpback()
 end)
 
 
+
+local walldrumppos = {
+    vec3(9190.0234375,53.026031494141,7198.9057617188),
+    vec3(8977.4853515625,53.056053161621,6953.486328125),
+
+    vec3(10623.758789063, 35.631958007813, 3499.5078125),
+    vec3(10110.14453125,-71.240600585938,4024.4760742188),
+
+    vec3(9971.3828125,-71.240600585938, 4058.9038085938),
+    vec3(10618.94921875,34.361785888672,3457.1430664063),
+}
+
+local function on_draw()
+    for i= 1, #walldrumppos do
+        graphics.draw_circle(walldrumppos[i], 3, 1, 0xFFFFFFFF, 16)
+    end
+end
 -- cb.add(cb.castspell, on_cast_spell)
 cb.add(cb.tick, on_tick)
 cb.add(cb.tick, yeahztest2)
+cb.add(cb.draw, on_draw)
 
 return Yeahtest
