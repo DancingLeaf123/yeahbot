@@ -54,11 +54,9 @@ local function on_tick()
         local notwallpos = vec3(pos.x,mousePos.y,pos.y)
         print("mousePos",mousePos.x,mousePos.y,mousePos.z)
         print("player.pos",player.pos.x,player.pos.y,player.pos.z)
-        print("notwallpos",notwallpos.x,notwallpos.y,notwallpos.z)
         local a = mousePos:dist(player.pos)
         local b = notwallpos:dist(player.pos)
-        print("mouse to player dist",a)
-        print("notwallpos to player dist",b)
+        print(a)
         -- print("player.direction",player.direction.x,player.direction.y,player.direction.z)
         -- print("player.direction2D",player.direction2D)
 
@@ -253,7 +251,7 @@ end
 
 orb.combat.register_f_pre_tick(function()
     -- walljump()
-    walljumpback()
+    -- walljumpback()
 end)
 
 

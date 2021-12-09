@@ -7,7 +7,7 @@ local core = module.load(header.id, 'core/main')
 
 
 local Yeahtest = module.load(header.id, 'Yeahtest')
-
+local wallJump = module.load(header.id, 'wallJump')
 
 orb.combat.register_f_pre_tick(function()
   spell.r2.on_update_buff()
