@@ -34,15 +34,18 @@ local WallJump = function ()
       player:castSpell('pos', 0, mousePos)
     end
 
+    -- We need to define a new move position since jumping over walls
+    -- requires you to be close to the specified wall. Therefore we set the move
     local wallCheck = GetFirstWallPoint(player.pos, mousePos, 25)
-    -- print("wallCheck",wallCheck)
+    
+    -- Be more precise
     if (wallCheck ~= nil) then
       wallCheck = GetFirstWallPoint(wallCheck:to3D(), mousePos, 5)
     end
     
     local movePosition = wallCheck ~= nil and wallCheck:to3D() or mousePos
     player:move(movePosition)
-    -- var tempGrid = NavMesh.WorldToGrid(movePosition.X, movePosition.Y);
+    -- var tempGrid = NavMesh.WorldToGrid(movePosition.X, movevPosition.Y);
     -- Program.FleePosition = NavMesh.GridToWorld((short)tempGrid.X, (short)tempGrid.Y);
     
     if wallCheck ~= nil then
