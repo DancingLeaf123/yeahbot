@@ -1,10 +1,5 @@
 local orb = module.internal('orb')
 local menu = module.load(header.id, 'menu')
-
-local spell = module.load(header.id, 'spell/main')
-local TS = module.internal('TS')
-local core = module.load(header.id, 'core/main')
-
 local pred = module.load(header.id, 'pred/main')
 
 

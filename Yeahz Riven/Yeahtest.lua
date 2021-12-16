@@ -40,33 +40,13 @@ local function on_tick()
         -- local e_flash_q = pred.e_flash_q.get_action_state()
         local e_flash_w = pred.e_flash_w.get_action_state()
         local flash_w = pred.flash_w.get_action_state()
-
-
-        -- print("e_flash_q.obj",e_flash_q.obj)
-        -- print("q.obj",q.obj)
-        -- print("e_flash_q.obj.ptr",e_flash_q.obj.ptr)
-        -- print("q.obj.ptr",q.obj.ptr)
-        -- print("isWall", navmesh.isWall(mousePos))
-        -- print("isStructure", navmesh.isStructure(mousePos))
         local pos, is_grass = navmesh.wall_drop_pos(mousePos2D)
-        -- print(mousePos2D.x,mousePos2D.y)
-        -- print(pos.x,pos.y)
         local notwallpos = vec3(pos.x,mousePos.y,pos.y)
         print("mousePos",mousePos.x,mousePos.y,mousePos.z)
         print("player.pos",player.pos.x,player.pos.y,player.pos.z)
         local a = mousePos:dist(player.pos)
         local b = notwallpos:dist(player.pos)
         print(a)
-        -- print("player.direction",player.direction.x,player.direction.y,player.direction.z)
-        -- print("player.direction2D",player.direction2D)
-
-        -- pred.flash_w.invoke_action(true)
-        -- if flash_w then
-        --     print("flash_w.source",flash_w.source)
-        --     print("pos",pos)
-        --     print(core.cur_attack_target)
-        -- end
-        -- pred.e_flash_w.invoke_action(true)
         local slot = player:spellSlot(0)
         print(slot.stacks)
         if player.path.isDashing then
@@ -74,25 +54,11 @@ local function on_tick()
             local s = 250 / player.path.dashSpeed
             print("s", s)
         end
-        -- print("player.path.dashSpeed", player.path.dashSpeed)
-        -- print("--------------")
         cb.remove(on_tick)
         tick_n = 0
         cb.add(cb.tick,  on_tick)
     end
 end
-
-
--- [09:20] spell.startPos  9190.0234375    53.026031494141
--- 7198.9057617188
--- [09:20] spell.startPos  9190.0234375    7198.9057617188
--- nil
--- [09:22] player.path.dashSpeed   783.8037109375
--- [09:22] s       0.31895740797269
-
--- [06:27] spell.startPos  9190    53.026031494141 7200
--- [06:27] spell.endPos    8977.4853515625 53.056053161621
--- 6953.486328125
 
 local function on_process_spell(spell)
     if spell.owner==player and spell.slot==2 then
@@ -116,31 +82,6 @@ local buff_active = function(name)
       end
     end
 end
--- [08:39] spell.startPos  10622.56640625  35.513870239258
--- 3475.2634277344
--- [08:39] spell.endPos    10104.634765625 -71.2406005859384047.8559570313
--- [08:39] mousePos        10078.6640625   -71.2404785156254054.9067382813
--- [08:39] player.pos      10549.985351563 41.717750549316
--- 3555.3498535156
--- [08:39] notwallpos      10048.895507813 -71.2404785156254032.755859375
--- [08:39] mouse to player dist    696.03189593133
--- [08:39] notwallpos to player dist       701.26106939819
--- [08:39] 3
--- [08:39] player.path.dashSpeed   1199.4805908203
--- [08:39] s       0.20842354758657
--- [08:42] mousePos        10129.559570313 -71.24072265625
--- 4024.4765625
--- [08:42] player.pos      10652.224609375 35.130912780762
--- 3499.001953125
--- [08:42] notwallpos      10098.895507813 -71.24072265625
--- 3982.755859375
--- [08:42] mouse to player dist    748.74376991168
--- [08:42] notwallpos to player dist       742.63440620109
--- [08:42] 3
--- [08:42] spell.startPos  10623.758789063 35.631958007813
--- 3499.5078125
--- [08:42] spell.endPos    10110.14453125  -71.2406005859384024.4760742188
-
 
 
 local flee = function ()
@@ -199,20 +140,6 @@ end
 
 
 
- 
--- [56:48] spell.startPos  8625.93359375, -71.240600585938, 6568.5268554688
--- [56:48] spell.endPos    8956.9736328125 53.059989929199
--- 6943.0625
-
-
-
--- [33:27] spell.startPos  10019.404296875 -71.240600585938 4044.154296875
--- [33:27] spell.endPos    10675.758789063 29.564165115356
-
--- [33:31] spell.startPos  9971.3828125    -71.240600585938 4058.9038085938
--- [33:31] spell.endPos    10618.94921875  34.361785888672
--- 3457.1430664063
- 
 local walljumpback = function ()
     if menu.flee:get() then
         local slot = player:spellSlot(0)
@@ -245,9 +172,7 @@ local walljumpback = function ()
     end
 end
 
--- [08:42] spell.startPos  10623.758789063 35.631958007813
--- 3499.5078125
--- [08:42] spell.endPos    10110.14453125,  -71.240600585938,4024.4760742188
+
 
 orb.combat.register_f_pre_tick(function()
     -- walljump()
