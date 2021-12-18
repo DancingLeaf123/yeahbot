@@ -2,6 +2,19 @@ local orb = module.internal('orb')
 local menu = module.load(header.id, 'menu')
 local pred = module.load(header.id, 'pred/main')
 
+local last_e = 0
+
+local bug_wallJumP_pos = {
+  start_1 = vec3(9190.0234375,53.026031494141,7198.9057617188),
+  end_1 = vec3(8977.4853515625,53.056053161621,6953.486328125),
+
+  start_2 = vec3(10623.758789063, 35.631958007813, 3499.5078125),
+  end_2 = vec3(10110.14453125,-71.240600585938,4024.4760742188),
+
+  start_3 = vec3(9971.3828125,-71.240600585938, 4058.9038085938),
+  end_3 = vec3(10618.94921875,34.361785888672,3457.1430664063),
+}
+
 
 local GetPathLength = function(path)
   local dist = 0
@@ -27,6 +40,9 @@ end
 
 local WallJump = function ()
   if menu.flee:get() then
+    if navmesh.isWall(player.pos) then
+      print("wall", navmesh.isWall(player.pos))
+    end
     local qSlot = player:spellSlot(0)
     local q = pred.q.get_spell_state()
     local e = pred.e.get_spell_state()
@@ -56,6 +72,73 @@ local WallJump = function ()
       local currentAngle = 0;
       local currentStep = 0;
       local jumpTriggered = false
+      local Min_bugJump_pos = bug_wallJumP_pos["start_1"]
+      local Min_bugEnd_pos = bug_wallJumP_pos["end_1"]
+      for key , value in pairs (bug_wallJumP_pos) do
+        if string.find(key, "start") then
+          if wallPosition:dist(value) <= wallPosition:dist(Min_bugJump_pos) then
+            Min_bugJump_pos = value
+            Min_bugEnd_pos = bug_wallJumP_pos[key:gsub( "start", "end")]
+          end
+        end
+      end
+      local wallcheck_bugstartpos = GetFirstWallPoint(wallPosition, Min_bugJump_pos, 25)
+      local wallCheck_123 = GetFirstWallPoint(Min_bugJump_pos, Min_bugEnd_pos, 1)
+      if wallCheck_123 then
+        -- print("wallCheck_123 to startpos", wallCheck_123:dist(Min_bugJump_pos:to2D()))
+      end
+      local bugjump_direction = (Min_bugJump_pos:to2D() - Min_bugEnd_pos:to2D()):norm()
+      -- 138
+      -- 172
+      local Truestart_pos = wallCheck_123:to3D() + 138 * bugjump_direction:to3D()
+      print("Truestart_pos dist",Truestart_pos:dist(wallCheck_123:to3D()))
+      if wallPosition:dist(Truestart_pos) < 1000 and not wallcheck_bugstartpos then
+        player:move(Truestart_pos)
+        for key , value in pairs (bug_wallJumP_pos) do
+          if bug_wallJumP_pos[key] == Min_bugJump_pos then
+            -- print(key,key:gsub( "start", "end"))
+          end
+        end
+        if qSlot.stacks >= 2 and player.pos2D:dist(Truestart_pos:to2D()) < 2.5  then
+          if e then
+            print("player.pos2D:dist(Truestart_pos:to2D())",player.pos2D:dist(Truestart_pos:to2D()))
+            last_e = game.time
+            print("last_e",last_e)
+            player:castSpell('pos', 2, Min_bugEnd_pos)
+          end
+        end
+        
+        -- local Q3delay = (game.time - last_e) >= 0.090 and (game.time - last_e) <= 0.11
+
+        -- local Q3delay = navmesh.isWall(player.pos)
+        -- if player.path.isDashing then
+        --   print("Q3delay_time_start",Q3delay_time_start)
+        --   if navmesh.isWall(player.pos) and Q3delay_time_start == nil then
+        --     local Q3delay_time_start = game.time
+        --     print("Q3delay_time_start",Q3delay_time_start)
+        --   end
+        -- end
+            -- if not navmesh.isWall(player.pos) then
+            --   local totalwalltime = game.time - Q3delay_time_start
+            --   print("totalwalltime", totalwalltime)
+            -- end
+          -- if navmesh.isWall(player.pos) and player.path.isDashing and then
+          --   print("Q3delay",Q3delay)
+          --   player:castSpell('pos', 0, Min_bugEnd_pos)
+          -- end
+
+        print(player.pos:dist(Min_bugJump_pos))
+        if navmesh.isWall(player.pos) and player.path.isDashing then
+          -- print("Q3delay",Q3delay)
+          -- print("before Q3 Q3delay_time_start",Q3delay_time_start)
+          -- print("before Q3 game time",game.time)
+          -- print("player.pos:dist(Min_bugJump_pos)",player.pos:dist(Min_bugJump_pos))
+          player:castSpell('pos', 0, Min_bugEnd_pos)
+          Q3delay_time_start = nil
+        end
+
+      end
+      do return end
       while(true)
       do
         if (currentStep > maxAngle and currentAngle < 0) then
@@ -89,7 +172,7 @@ local WallJump = function ()
               end
               local allpathlen = GetPathLength(temptable)
               -- print("allpathlen",allpathlen)
-              if (allpathlen - player.pos:dist(wallPositionOpposite) > 280) then
+              if (allpathlen - player.pos:dist(wallPositionOpposite) > 220) then
                 player:move(movePosition)
                 graphics.draw_line(wallPositionOpposite, wallPosition, 2, 0xFF008000)
                 if (player.pos:distSqr(wallPositionOpposite) < (480 - player.boundingRadius / 2)^2 and qSlot.stacks >= 2) then
@@ -107,8 +190,7 @@ local WallJump = function ()
                   break;
                 end
                 IsJumpPossible = true
-              end
-              if not IsJumpPossible then
+              else
                 player:move(mousePos)
               end
             end
