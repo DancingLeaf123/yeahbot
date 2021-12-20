@@ -10,6 +10,7 @@ end
 
 local invoke_action = function(pause)
   player:attack(res.obj)
+  -- print("aa invoke obj name---",res.obj.charName)
   if pause then
     orb.core.set_server_pause()
   end

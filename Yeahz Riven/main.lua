@@ -5,9 +5,11 @@ local spell = module.load(header.id, 'spell/main')
 
 local core = module.load(header.id, 'core/main')
 
-
 local Yeahtest = module.load(header.id, 'Yeahtest')
 local flee = module.load(header.id, 'flee')
+local pushtest = module.load(header.id, 'pushtest')
+
+local drawtest = module.load(header.id, 'drawtest')
 
 orb.combat.register_f_pre_tick(function()
   spell.r2.on_update_buff()
@@ -22,6 +24,9 @@ local on_draw = function()
   core.draw.push()
   core.draw.r1()
   core.draw.e_aa()
+
+  --
+  drawtest.draw_W_range()
 end
 
 local on_recv_spell = function(proc)

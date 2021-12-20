@@ -9,8 +9,8 @@ local r2 = {
   delay = 0.25,
   speed = 1600,
   width = 5,
-  -- range = (1100-100)^2,
-  range = 1100^2,
+  range = (1100-100)^2,
+  -- range = 1100^2,
 }
 
 local spell_name_start = 'RivenFengShuiEngine'

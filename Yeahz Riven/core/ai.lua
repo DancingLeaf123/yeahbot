@@ -201,6 +201,7 @@ local general = function()
 
   if menu.push:get() then
     if pred.aa.get_push_state() then
+      -- print("Genearl push aa")
       pred.aa.invoke_action(true)
       return true
     end

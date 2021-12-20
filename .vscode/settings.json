@@ -1,5 +1,9 @@
 {
   "Lua.diagnostics.disable": [
-    "deprecated"
+    "deprecated",
+    "redefined-local"
+  ],
+  "Lua.diagnostics.globals": [
+    "conut"
   ]
 }

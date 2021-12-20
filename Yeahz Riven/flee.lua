@@ -82,7 +82,7 @@ local WallJump = function ()
       end
     end
     local wallCheck_123 = GetFirstWallPoint(Min_bugJump_pos, Min_bugEnd_pos, 1)
-    -- local wallcheck_bugstartpos = GetFirstWallPoint(wallPosition, Min_bugJump_pos, 200)
+    local wallcheck_bugstartpos = GetFirstWallPoint(wallPosition, Min_bugJump_pos, 50)
     local bugjump_direction = (Min_bugEnd_pos:to2D() - Min_bugJump_pos:to2D()):norm()
     local bugjump_direction_rev = (Min_bugJump_pos:to2D() - Min_bugEnd_pos:to2D()):norm()
     local Truestart_pos = wallCheck_123:to3D() + 170 * bugjump_direction_rev:to3D()
@@ -90,10 +90,11 @@ local WallJump = function ()
     -- print("bugjump_direction",bugjump_direction.x,bugjump_direction.y)
     -- print("mouse_direction",mouse_direction.x,mouse_direction.y)
     -- and Orthant_2D(bugjump_direction) == Orthant_2D(mouse_direction)
-    if wallPosition:dist(Truestart_pos) < 700 then
+    if wallPosition:dist(Truestart_pos) < 700 and not wallcheck_bugstartpos then
       -- 172 138`
       -- print("Truestart_pos dist",Truestart_pos:dist(wallCheck_123:to3D()))
       player:move(Truestart_pos)
+      graphics.draw_line(Truestart_pos, Min_bugEnd_pos, 2, 0xFF008000)
       graphics.draw_circle(Truestart_pos, 50, 2, 0xFF008000, 24)
       for key , value in pairs (bug_wallJumP_pos) do
         if bug_wallJumP_pos[key] == Min_bugJump_pos then
@@ -132,10 +133,10 @@ local WallJump = function ()
       else
           checkPoint = wallPosition + 435 * direction:rotate(currentAngle):to3D();
       end
-          graphics.draw_line(checkPoint, wallPosition, 2, 0xFFFFFFFF)
+          -- graphics.draw_line(checkPoint, wallPosition, 2, 0xFFFFFFFF)
       if not(navmesh.isWall(checkPoint) or navmesh.isStructure(checkPoint)) then
         wallCheck = GetFirstWallPoint(checkPoint, wallPosition);
-        if (wallCheck ~= nil) then
+        if (wallCheck ~= nil) then 
           local firstWallPoint = GetFirstWallPoint(wallCheck:to3D(), wallPosition);
           if (firstWallPoint ~= nil) then
             local wallPositionOpposite = firstWallPoint:to3D();
@@ -149,10 +150,10 @@ local WallJump = function ()
             -- print("allpathlen",allpathlen)
             if (allpathlen - player.pos:dist(wallPositionOpposite) > 200) then
               player:move(movePosition)
-              graphics.draw_line(wallPositionOpposite, wallPosition, 2, 0xFF008000)
+              graphics.draw_line(wallPositionOpposite, wallPosition, 2, 0xFFFFFFFF)
+              graphics.draw_circle(wallPosition, 50, 2, 0xFF008000, 24)
               if (player.pos:distSqr(wallPositionOpposite) < (480 - player.boundingRadius / 2)^2 and qSlot.stacks >= 2) then
-                graphics.draw_line(wallPositionOpposite, wallPosition, 2, 0xFFFF0000)
-                graphics.draw_circle(wallPosition, 50, 2, 0xFF008000, 24)
+                graphics.draw_line(wallPositionOpposite, wallPosition, 2, 0xFF008000)
                 print("cast E ----------------------",(480 - player.boundingRadius / 2))
                 print("cast E ----------------------",player.pos:dist(wallPositionOpposite))
                 print("cast E ----------------------",(300 - player.boundingRadius / 2)^2)

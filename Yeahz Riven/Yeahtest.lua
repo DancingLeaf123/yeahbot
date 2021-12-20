@@ -12,27 +12,25 @@ local items = module.internal('items')
 local tick_n = 0
 local function on_tick()
     tick_n = tick_n + 1
-    if tick_n == 200 then
+    if tick_n == 30 then
         if TS.selected then
             local a = TS.selected.pos:dist(player.pos)
             print(a)
         end
-        local q = pred.q.get_action_state()
-        local e = pred.e.get_action_state()
-        local e_q = pred.e_q.get_action_state()
-        local r1 = pred.r1.get_action_state() 
-        local w = pred.w.get_action_state()
-        -- local e_flash_q = pred.e_flash_q.get_action_state()
-        local e_flash_w = pred.e_flash_w.get_action_state()
-        local flash_w = pred.flash_w.get_action_state()
         local pos, is_grass = navmesh.wall_drop_pos(mousePos2D)
         local notwallpos = vec3(pos.x,mousePos.y,pos.y)
         local slot = player:spellSlot(0)
-        if player.path.isDashing then
-            print("player.path.dashSpeed", player.path.dashSpeed)
-            local s = 250 / player.path.dashSpeed
-            print("s", s)
-        end
+        -- if player.path.isDashing then
+        --     print("player.path.dashSpeed", player.path.dashSpeed)
+        --     local s = 250 / player.path.dashSpeed
+        --     print("s", s)
+        -- end
+        -- local pred = module.internal('pred')
+        -- local res = pred.core.get_pos_after_time(player, 0.5)
+        -- print(('           %.2f-%.2f'):format(res.x, res.y))
+        -- print(('player pos %.2f-%.2f'):format(player.pos2D.x, player.pos2D.y))
+        -- print("game.tickID", game.tickID)
+        -- print("game.time", game.time)
         cb.remove(on_tick)
         tick_n = 0
         cb.add(cb.tick,  on_tick)

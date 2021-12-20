@@ -15,6 +15,7 @@ local input = {
   boundingRadiusModTarget = 0,
 }
 
+
 local f = function(res, obj, dist)
   if dist > 1500 then return end
   if pred.present.get_prediction(input, obj, source) then
@@ -61,8 +62,10 @@ end
 
 local get_push_state = function()
   if get_spell_state() then
-    local obj = push.get_prediction(get_total_delay(), get_total_radius())
-    if obj then
+    local obj,p2,n = push.get_prediction(get_total_delay(), get_total_radius())
+    if obj and n >= 3 then
+      print(obj.charName)
+      print("n",n)
       return {obj = obj}
     end
   end

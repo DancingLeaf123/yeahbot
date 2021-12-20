@@ -18,6 +18,9 @@ local input = {
 local f = function(res, obj, dist)
   if dist > 1500 then return end
   if pred.present.get_prediction(input, obj, source) then
+    -- local rpos = pred.present.get_prediction(input, obj, source)
+    -- print("rpos",rpos.x,rpos.y)
+    -- print(obj.charName)
     res.obj = obj
     return true
   end
@@ -69,8 +72,11 @@ local get_push_state = function()
   if get_spell_state() then
     local obj = push.get_prediction(get_total_delay(), get_total_radius())
     if obj then
-      res = {obj = obj}
-      return res
+      if push.get_minion_count_inrange(obj.pos,225) >= 2 then
+        print("push.get_minion_count_inrange(rpos,input.radius) >= 2",push.get_minion_count_inrange(obj.pos,225))
+        res = {obj = obj}
+        return res
+      end
     end
   end
 end
