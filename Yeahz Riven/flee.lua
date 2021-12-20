@@ -65,8 +65,8 @@ local WallJump = function ()
   if wallCheck ~= nil then
     local wallPosition = movePosition;
     local direction = (mousePos:to2D() - wallPosition:to2D()):norm()
-    local maxAngle = 80
-    local step = maxAngle / 20
+    local maxAngle = 20
+    local step = maxAngle / 10
     local currentAngle = 0;
     local currentStep = 0;
     local jumpTriggered = false
@@ -87,22 +87,22 @@ local WallJump = function ()
     local bugjump_direction_rev = (Min_bugJump_pos:to2D() - Min_bugEnd_pos:to2D()):norm()
     local Truestart_pos = wallCheck_123:to3D() + 170 * bugjump_direction_rev:to3D()
     
-    print("bugjump_direction",bugjump_direction.x,bugjump_direction.y)
-    print("mouse_direction",mouse_direction.x,mouse_direction.y)
+    -- print("bugjump_direction",bugjump_direction.x,bugjump_direction.y)
+    -- print("mouse_direction",mouse_direction.x,mouse_direction.y)
     -- and Orthant_2D(bugjump_direction) == Orthant_2D(mouse_direction)
     if wallPosition:dist(Truestart_pos) < 700 then
       -- 172 138`
-      print("Truestart_pos dist",Truestart_pos:dist(wallCheck_123:to3D()))
+      -- print("Truestart_pos dist",Truestart_pos:dist(wallCheck_123:to3D()))
       player:move(Truestart_pos)
       graphics.draw_circle(Truestart_pos, 50, 2, 0xFF008000, 24)
       for key , value in pairs (bug_wallJumP_pos) do
         if bug_wallJumP_pos[key] == Min_bugJump_pos then
-          print(key,key:gsub( "start", "end"))
+          -- print(key,key:gsub( "start", "end"))
         end
       end
       if qSlot.stacks >= 2 and player.pos2D:dist(Truestart_pos:to2D()) < 2.5  then
         if e then
-          print("player.pos2D:dist(Truestart_pos:to2D())",player.pos2D:dist(Truestart_pos:to2D()))
+          -- print("player.pos2D:dist(Truestart_pos:to2D())",player.pos2D:dist(Truestart_pos:to2D()))
           last_e = game.time
           player:castSpell('pos', 2, Min_bugEnd_pos)
         end
@@ -147,7 +147,7 @@ local WallJump = function ()
             end
             local allpathlen = GetPathLength(temptable)
             -- print("allpathlen",allpathlen)
-            if (allpathlen - player.pos:dist(wallPositionOpposite) > 220) then
+            if (allpathlen - player.pos:dist(wallPositionOpposite) > 200) then
               player:move(movePosition)
               graphics.draw_line(wallPositionOpposite, wallPosition, 2, 0xFF008000)
               if (player.pos:distSqr(wallPositionOpposite) < (480 - player.boundingRadius / 2)^2 and qSlot.stacks >= 2) then
@@ -181,7 +181,6 @@ end
 
 local flee = function ()
   if menu.flee_setting.flee:get() then
-    game.setCameraLock(1)
     local enemy_inrange = false
     for i=0, objManager.enemies_n-1 do
       local obj = objManager.enemies[i]
@@ -200,8 +199,11 @@ local flee = function ()
     if w then
       pred.w.invoke_action(true)
     end
+    if not q and not e then
+      player:move(mousePos)
+    end
     if keyboard.isKeyDown(0x1) and menu.flee_setting.quickrun:get() == 2 then
-      if e and qSlot.stacks >= 2 and not player.path.isDashing then
+      if e and not q or qSlot.stacks >= 2 and not player.path.isDashing then
         player:castSpell('pos', 2, mousePos)
       elseif q and not player.path.isDashingthen then
         player:castSpell('pos', 0, mousePos)
@@ -225,6 +227,25 @@ local draw_2D = function ()
   end
   graphics.draw_circle(player.pos, 1200, 2, 0xFFFFFFFF, 24)
 end
+
+
+local function on_key_down(k)
+  if k==keyboard.stringToKeyCode(menu.flee_setting.flee.key) then
+      print('flee key is down')
+      game.setCameraLock(1)
+  end
+end
+
+local function on_key_up(k)
+  if k==keyboard.stringToKeyCode(menu.flee_setting.flee.key) then
+    print('flee key is up')
+    game.setCameraLock(0)
+end
+end
+
+cb.add(cb.keydown, on_key_down)
+cb.add(cb.keyup, on_key_up)
+
 
 cb.add(cb.draw, draw_2D)
 
