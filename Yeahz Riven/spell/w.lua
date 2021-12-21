@@ -7,7 +7,7 @@ local is_ready = function(t)
 end
 
 local radius = function()
-  return r1.is_active and 375 or 300
+  return r1.is_active and 300 or 250
 end
 
 local dmg = function()

@@ -26,7 +26,9 @@ local on_draw = function()
   core.draw.e_aa()
 
   --
-  drawtest.draw_W_range()
+  -- drawtest.draw_W_range()
+  drawtest.draw_Q_range()
+  drawtest.target_near_range()
 end
 
 local on_recv_spell = function(proc)

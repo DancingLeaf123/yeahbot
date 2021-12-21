@@ -72,7 +72,7 @@ local get_push_state = function()
   if get_spell_state() then
     local obj = push.get_prediction(get_total_delay(), get_total_radius())
     if obj then
-      if push.get_minion_count_inrange(obj.pos,225) >= 2 then
+      if push.get_minion_count_inrange(obj.pos,225) >= 1 then
         print("push.get_minion_count_inrange(rpos,input.radius) >= 2",push.get_minion_count_inrange(obj.pos,225))
         res = {obj = obj}
         return res
