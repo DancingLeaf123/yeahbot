@@ -28,15 +28,21 @@ local target_near_range = function ()
         local q = pred.q.get_action_state()
         local truepos = orb.core.cur_attack_target.pos2D:dist(player.pos2D) < 225 and orb.core.cur_attack_target.pos:dist(player.pos) or 225
         local min = orb.core.cur_attack_target.pos2D:dist(player.pos2D) - orb.core.cur_attack_target.boundingRadius
-        
+        local startdis = 
         print(orb.core.cur_attack_target.boundingRadius)
         print(player.boundingRadius)
         print("at r",player.attackRange)
         print(orb.core.cur_attack_target.pos2D:dist(player.pos2D))
         print("-", orb.core.cur_attack_target.pos2D:dist(player.pos2D) - orb.core.cur_attack_target.boundingRadius)
+        -- graphics.draw_circle(orb.core.cur_attack_target.pos, 150, 2, 0xff8fbe93, 64)
+        if TS.selected then
+            print("ts.selected", TS.selected.pos2D:dist(player.pos2D))
+        end
+        graphics.draw_circle(VextorExtend(player.pos, mousePos, 225), 225, 2, 0xff8fbe93, 64)
     end
-    graphics.draw_circle(VextorExtend(player.pos, mousePos, 225), spell.q.radius(), 2, 0xff8fbe93, 64)
-    graphics.draw_circle(player.pos, 190, 2, 0xff8fbe93, 64)
+    -- hero.direction2D
+    -- graphics.draw_circle(player.pos, 190, 2, 0xff8fbe93, 64)
+    
 end
 
 -- 什么东西是一个定值？  是player离目标的距离-
@@ -58,7 +64,8 @@ end
 -- 如果说离攻击表面 >105 但是<105+225 就必然是突进到离该点105.
 -- 再大的话，如果大过了攻击距离+225则不行， 若小于，会平移平A
 
--- 总结一下就是说， 如果
+-- 总结一下就是说， 如果说<100之后，必然是每次朝着中心位置10个单位  
+    -- >105，<330,则肯定是105
 
 return {
     draw_W_range = draw_W_range,
