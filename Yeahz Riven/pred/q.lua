@@ -50,7 +50,7 @@ local get_action_state = function(pos)
 end
 
 local invoke_action = function(pause)
-  player:castSpell('obj', 0, res.obj)
+  
   if pause then
     orb.core.set_server_pause()
   end
