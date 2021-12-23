@@ -26,6 +26,8 @@ local f = function(res, obj, dist)
   end
 end
 
+-- 425+125
+-- 225 + 45 + 130 = 400
 local res = {}
 
 local get_prediction = function()
@@ -36,7 +38,7 @@ local get_prediction = function()
 end
 
 local get_spell_state = function()
-  return q.is_ready() 
+  return q.is_ready()
 end
 
 local get_action_state = function(pos)
@@ -50,7 +52,9 @@ local get_action_state = function(pos)
 end
 
 local invoke_action = function(pause)
-  
+  player:castSpell('obj', 0, res.obj)
+  print(res.obj.pos2D:dist(player.pos2D))
+  -- print("player.attackRange",player.attackRange)
   if pause then
     orb.core.set_server_pause()
   end
