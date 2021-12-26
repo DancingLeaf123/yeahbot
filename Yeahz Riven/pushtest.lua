@@ -25,10 +25,8 @@ local function trace_filter(seg, obj)
 end
 
 local function target_filter(res, obj, dist)
-    print(dist)
     if dist > 400 then return false end
     local seg = pred.circular.get_prediction(pred_input, obj)
-    print(seg.startPos:dist(seg.endPos),type(seg))
 
     if not seg then return false end
     if not trace_filter(seg, obj) then return false end
@@ -42,10 +40,6 @@ local function on_tick()
     local res = ts.get_result(target_filter)
     if res.pos then
         player:castSpell('pos', 1, vec3(res.pos.x, mousePos.y, res.pos.y))
-        -- local count_res = 0
-        -- for _ in pairs(res) do count_res = count_res + 1 end
-        -- print("size of fifth table is ::" , count_res)
-        -- print(#res)
         orb.core.set_server_pause()
         return true
     end

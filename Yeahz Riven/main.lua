@@ -29,6 +29,7 @@ local on_draw = function()
   drawtest.draw_W_range()
   drawtest.draw_Q_range()
   drawtest.target_near_range()
+  drawtest.permashow()
 end
 
 local on_recv_spell = function(proc)

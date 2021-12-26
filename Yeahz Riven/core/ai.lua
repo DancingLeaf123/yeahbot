@@ -49,7 +49,6 @@ local can_double_cast = function()
 end
 
 local on_after_attack = function()
-  --print("after attack", os.clock())
   if menu.push:get() and menu.farm_setting.farm:get() then
     if menu_push_e_get() and menu_push_w_get() then
       if pred.e_w.get_push_state() then
@@ -161,7 +160,6 @@ local on_after_attack = function()
       end
     end
     if q then
-      --print("1")
       if w.obj.ptr ~= q.obj.ptr then
         pred.q.invoke_action(true)
         orb.combat.set_invoke_after_attack(false)
@@ -210,7 +208,6 @@ local on_after_attack = function()
   end
   
   if q then
-    --print("2")
     pred.q.invoke_action(true)
     orb.combat.set_invoke_after_attack(false)
     return true -- aa->q
@@ -222,7 +219,6 @@ local general = function()
 
   if menu.push:get() and menu.farm_setting.farm:get() then
     if pred.aa.get_push_state() then
-      -- print("Genearl push aa")
       pred.aa.invoke_action(true)
       return true
     end
@@ -270,8 +266,6 @@ local general = function()
     local flash_w = pred.flash_w.get_action_state()
     local e_flash_w = pred.e_flash_w.get_action_state()
     local e_flash_q = pred.e_flash_q.get_action_state()
-    --local t = os.clock() - t
-    --print("benchmark", t)
 
     if flash_w and not menu.flash_only_r:get() then
       if not w and not q and not e_w then
@@ -415,8 +409,6 @@ local on_end_q1 = function()
   on_end_func = nil
   orb.core.reset()
   orb.core.set_pause(0)
-  --print("hi", os.clock(), orb.combat.target and 1 or 0)
-  --print('end q1', os.clock())
   if pred.r2_dmg.get_action_state() then
     pred.r2_dmg.invoke_action(true)
     return true
@@ -432,7 +424,6 @@ local on_end_q2 = function()
   on_end_func = nil
   orb.core.reset()
   orb.core.set_pause(0)
-  --print('end q2', os.clock())
   if pred.r2_dmg.get_action_state() then
     pred.r2_dmg.invoke_action(true)
     return true
@@ -448,7 +439,6 @@ local on_end_q3 = function()
   on_end_func = nil
   orb.core.reset()
   orb.core.set_pause(0)
-  --print('end q3', os.clock())
   if pred.r2_dmg.get_action_state() then
     pred.r2_dmg.invoke_action(true)
     return true
@@ -499,7 +489,6 @@ local on_end_w = function()
 
   if not orb.core.can_attack() then
     if q then
-      --print("4")
       pred.q.invoke_action(true)
       return true -- w->q
     end
@@ -897,21 +886,18 @@ end
 
 
 local on_move_q1 = function()
-  --print('move q1')
   move_to_mouse(400)
   on_end_func = on_end_q1
   on_end_time = on_end_time + 0.150 + 0.125
 end
 
 local on_move_q2 = function()
-  --print('move q2')
   move_to_mouse(400)
   on_end_func = on_end_q2
   on_end_time = on_end_time + 0.150 + 0.125
 end
 
 local on_move_q3 = function()
-  --print('move q3')
   move_to_mouse(400)
   on_end_func = on_end_q3
   on_end_time = on_end_time + 0.250 + 0.125
@@ -923,13 +909,11 @@ local on_cast_q1 = function()
 end
 
 local on_cast_q2 = function()
-  --print('q2')
   on_end_func = on_move_q2
   on_end_time = os.clock() + 0.15
 end
 
 local on_cast_q3 = function()
-  --print('q3')
   on_end_func = on_move_q3
   on_end_time = os.clock() + 0.25
 end
@@ -943,8 +927,6 @@ end
 local on_create_obj = function(obj)
   if true then
     if on_end_qx[obj.name] then
-        --print("XX", obj.name)
-      --print('override', obj.name, os.clock())
       on_end_func = on_end_qx[obj.name]
       on_end_time = os.clock() + 0.125
     end
@@ -1009,7 +991,6 @@ local get_action = function()
 end
 
 local on_recv_spell = function(spell)
-  --print(spell.name, spell.windUpTime, os.clock(), spell.isBasicAttack)
   if f_spell_map[spell.name] then
     f_spell_map[spell.name](spell)
     last_spell = os.clock()

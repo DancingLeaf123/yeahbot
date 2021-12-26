@@ -51,16 +51,11 @@ local Orthant_2D = function(d)
 end
 
 local WallJump = function ()
-  -- We need to define a new move position since jumping over walls
-  -- requires you to be close to the specified wall. Therefore we set the move
-  -- Be more precise
   if (wallCheck ~= nil) then
     wallCheck = GetFirstWallPoint(wallCheck:to3D(), mousePos, 5)
   end
   
   local movePosition = wallCheck ~= nil and q and wallCheck:to3D() or mousePos
-  -- var tempGrid = NavMesh.WorldToGrid(movePosition.X, movevPosition.Y);
-  -- Program.FleePosition = NavMesh.GridToWorld((short)tempGrid.X, (short)tempGrid.Y);
   local IsJumpPossible = false
   if wallCheck ~= nil then
     local wallPosition = movePosition;
@@ -87,20 +82,10 @@ local WallJump = function ()
     local bugjump_direction_rev = (Min_bugJump_pos:to2D() - Min_bugEnd_pos:to2D()):norm()
     local Truestart_pos = wallCheck_123:to3D() + 170 * bugjump_direction_rev:to3D()
     
-    -- print("bugjump_direction",bugjump_direction.x,bugjump_direction.y)
-    -- print("mouse_direction",mouse_direction.x,mouse_direction.y)
-    -- and Orthant_2D(bugjump_direction) == Orthant_2D(mouse_direction)
     if wallPosition:dist(Truestart_pos) < 700 and not wallcheck_bugstartpos then
-      -- 172 138`
-      -- print("Truestart_pos dist",Truestart_pos:dist(wallCheck_123:to3D()))
       player:move(Truestart_pos)
       graphics.draw_line(Truestart_pos, Min_bugEnd_pos, 2, 0xFF008000)
       graphics.draw_circle(Truestart_pos, 50, 2, 0xFF008000, 24)
-      for key , value in pairs (bug_wallJumP_pos) do
-        if bug_wallJumP_pos[key] == Min_bugJump_pos then
-          -- print(key,key:gsub( "start", "end"))
-        end
-      end
       if qSlot.stacks >= 2 and player.pos2D:dist(Truestart_pos:to2D()) < 2.5  then
         if e then
           -- print("player.pos2D:dist(Truestart_pos:to2D())",player.pos2D:dist(Truestart_pos:to2D()))
@@ -133,7 +118,6 @@ local WallJump = function ()
       else
           checkPoint = wallPosition + 435 * direction:rotate(currentAngle):to3D();
       end
-          -- graphics.draw_line(checkPoint, wallPosition, 2, 0xFFFFFFFF)
       if not(navmesh.isWall(checkPoint) or navmesh.isStructure(checkPoint)) then
         wallCheck = GetFirstWallPoint(checkPoint, wallPosition);
         if (wallCheck ~= nil) then 
@@ -143,20 +127,16 @@ local WallJump = function ()
             local allpath,n = player.path:calcPos(wallPositionOpposite)
             local temptable = {}
             for i = 0, n - 1 do
-              -- graphics.draw_circle(allpath[i], 15, 2, 0xffffffff, 3)
               table.insert(temptable, allpath[i])
             end
             local allpathlen = GetPathLength(temptable)
-            -- print("allpathlen",allpathlen)
             if (allpathlen - player.pos:dist(wallPositionOpposite) > 200) then
               player:move(movePosition)
               graphics.draw_line(wallPositionOpposite, wallPosition, 2, 0xFFFFFFFF)
               graphics.draw_circle(wallPosition, 50, 2, 0xFF008000, 24)
               if (player.pos:distSqr(wallPositionOpposite) < (480 - player.boundingRadius / 2)^2 and qSlot.stacks >= 2) then
                 graphics.draw_line(wallPositionOpposite, wallPosition, 2, 0xFF008000)
-                print("cast E ----------------------",(480 - player.boundingRadius / 2))
-                print("cast E ----------------------",player.pos:dist(wallPositionOpposite))
-                print("cast E ----------------------",(300 - player.boundingRadius / 2)^2)
+                print("walljump distance",player.pos:dist(wallPositionOpposite))
                 if (e) then
                   player:castSpell('pos', 2, wallPositionOpposite)
                 elseif (q) then
@@ -254,4 +234,7 @@ orb.combat.register_f_pre_tick(function()
   flee()
 end)
 
-return flee
+return {
+  IsJumpPossible = IsJumpPossible,
+  WallJump = WallJump,
+}

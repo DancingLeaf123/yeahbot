@@ -9,7 +9,7 @@ local Mymenu = menu('Yeahz_riven', 'Yeahz Riven')
 
 Mymenu:header('header_push', 'Panic clear')
 Mymenu:menu('farm_setting', 'Farm setting')
-Mymenu.farm_setting:keybind('farm', 'Farm toggle', 'nil', "L")
+Mymenu.farm_setting:keybind('farm', 'Farm toggle', nil, "L")
 Mymenu.farm_setting:menu('lane_clear', 'Lane_clear')
 Mymenu.farm_setting.lane_clear:boolean('push_q', 'Use Q', true)
 Mymenu.farm_setting.lane_clear:slider('push_q_count', '   ^== Use Q minions >=', 1, 1, 6, 1)

@@ -15,7 +15,6 @@ local function on_tick()
     if tick_n == 30 then
         if TS.selected then
             local a = TS.selected.pos:dist(player.pos)
-            print(a)
         end
         local pos, is_grass = navmesh.wall_drop_pos(mousePos2D)
         local notwallpos = vec3(pos.x,mousePos.y,pos.y)
@@ -39,12 +38,8 @@ end
 
 local function on_process_spell(spell)
     if spell.owner==player and spell.slot==2 then
-        print("spell.startPos",spell.startPos.x,spell.startPos.y,spell.startPos.z)
-        print("spell.endPos",spell.endPos.x,spell.endPos.y,spell.endPos.z)
         if player.path.isDashing then
-            print("player.path.dashSpeed", player.path.dashSpeed)
             local s = 250 / player.path.dashSpeed
-            print("s", s)
         end
     end
 end

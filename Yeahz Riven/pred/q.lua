@@ -51,8 +51,6 @@ end
 
 local invoke_action = function(pause)
   player:castSpell('obj', 0, res.obj)
-  print(res.obj.pos2D:dist(player.pos2D))
-  -- print("player.attackRange",player.attackRange)
   if pause then
     orb.core.set_server_pause()
   end
