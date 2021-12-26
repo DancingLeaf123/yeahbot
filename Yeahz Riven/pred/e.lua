@@ -3,6 +3,7 @@ local orb = module.internal('orb')
 local pred = module.internal('pred')
 
 local e = module.load(header.id, 'spell/e')
+local menu = module.load(header.id, 'menu')
 
 local input = {
   delay = e.delay,
@@ -67,7 +68,11 @@ local get_push_state = function()
   if get_spell_state() then
     res.obj = player
     res.pos = vec2(mousePos.x, mousePos.z)
-    return true
+    if orb.core.cur_attack_target then
+      if (orb.core.cur_attack_target.team == 300 and menu.farm_setting.jungle_clear.push_e:get()) or (orb.core.cur_attack_target.team == 200 and menu.farm_setting.lane_clear.push_e:get()) then
+        return true
+      end
+    end
   end
 end
 

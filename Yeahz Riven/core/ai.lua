@@ -25,14 +25,33 @@ local last_spell = 0
 local on_cast_qx = {}
 local on_end_qx = {}
 
+
+local menu_push_q_get = function ()
+  if (menu.farm_setting.jungle_clear.push_q:get() or menu.farm_setting.lane_clear.push_q:get()) then
+    return true
+  end
+end
+
+local menu_push_w_get = function ()
+  if (menu.farm_setting.jungle_clear.push_w:get() or menu.farm_setting.lane_clear.push_w:get()) then
+    return true
+  end
+end
+
+local menu_push_e_get = function ()
+  if (menu.farm_setting.jungle_clear.push_e:get() or menu.farm_setting.lane_clear.push_w:get()) then
+    return true
+  end
+end
+
 local can_double_cast = function()
   return os.clock() + network.latency < last_e + double_cast_timeout
 end
 
 local on_after_attack = function()
   --print("after attack", os.clock())
-  if menu.push:get() then
-    if menu.push_e:get() and menu.push_w:get() then
+  if menu.push:get() and menu.farm_setting.farm:get() then
+    if menu_push_e_get() and menu_push_w_get() then
       if pred.e_w.get_push_state() then
         if pred.e_q.get_spell_state() then
           pred.e_w.invoke_action(true)
@@ -50,9 +69,9 @@ local on_after_attack = function()
       return true
     end
     local w = pred.w.get_push_state()
-    if menu.push_w:get() then
+    if menu_push_w_get() then
       if w then
-        if pred.q.get_spell_state() then
+        if pred.q.get_spell_state() and menu_push_q_get() then
           if can_double_cast() then
             pred.w.invoke_action(true)
             player:castSpell('obj', 0, w.obj)
@@ -62,19 +81,21 @@ local on_after_attack = function()
         end
       end
     end
-    if pred.q.get_push_state() then
-      pred.q.invoke_action(true)
-      orb.combat.set_invoke_after_attack(false)
-      return true
+    if menu_push_q_get() then
+      if pred.q.get_push_state() then
+        pred.q.invoke_action(true)
+        orb.combat.set_invoke_after_attack(false)
+        return true
+      end
     end
-    if menu.push_w:get() then
+    if menu_push_w_get() then
       if w then
         pred.w.invoke_action(true)
         orb.combat.set_invoke_after_attack(false)
         return true
       end
     end
-    if menu.push_e:get() then
+    if menu_push_e_get() then
       if pred.e.get_push_state() then
         pred.e.invoke_action()
       end
@@ -199,13 +220,13 @@ end
 
 local general = function()
 
-  if menu.push:get() then
+  if menu.push:get() and menu.farm_setting.farm:get() then
     if pred.aa.get_push_state() then
       -- print("Genearl push aa")
       pred.aa.invoke_action(true)
       return true
     end
-    if menu.push_e:get() and menu.push_w:get() then
+    if menu_push_e_get() and menu_push_w_get() then
       if pred.e_w.get_push_state() then
         if pred.e_q.get_spell_state() then
           pred.e_w.invoke_action(true)
@@ -216,17 +237,19 @@ local general = function()
         end
       end
     end
-    if menu.push_e:get() then
-      if not menu.push_w:get() or not pred.w.get_spell_state() then
+    if menu_push_e_get() then
+      if not menu_push_w_get() or not pred.w.get_spell_state() then
         if pred.e_q.get_push_state() then
           pred.e_q.invoke_action(true)
           return true
         end
       end
     end
-    if pred.q.get_push_state() then
-      pred.q.invoke_action(true)
-      return true
+    if menu_push_q_get() then
+      if pred.q.get_push_state() then
+        pred.q.invoke_action(true)
+        return true
+      end
     end
     if orb.core.can_action() then
       player:move(mousePos)
@@ -492,8 +515,8 @@ local on_end_e = function()
   on_end_func = nil
   orb.core.set_pause(0)
 
-  if menu.push:get() then
-    if menu.push_w:get() then
+  if menu.push:get() and menu.farm_setting.farm:get() then
+    if menu_push_w_get() then
       local w = pred.w.get_push_state()
       if w then
         pred.w.invoke_action(true)
@@ -503,9 +526,11 @@ local on_end_e = function()
         return true
       end
     end
-    if pred.q.get_push_state() then
-      pred.q.invoke_action(true)
-      return true
+    if menu_push_q_get() then
+      if pred.q.get_push_state() then
+        pred.q.invoke_action(true)
+        return true
+      end
     end
   end
 
@@ -777,8 +802,8 @@ local on_end_r_hydra = function()
   on_end_func = nil
   orb.core.set_pause(0)
 
-  if menu.push:get() then
-    if menu.push_e:get() and menu.push_w:get() then
+  if menu.push:get() and menu.farm_setting.farm:get() then
+    if menu_push_e_get() and menu_push_w_get() then
       if pred.e_w.get_push_state() then
         if pred.e_q.get_spell_state() then
           pred.e_w.invoke_action(true)
@@ -789,11 +814,13 @@ local on_end_r_hydra = function()
         end
       end
     end
-    if pred.q.get_push_state() then
-      pred.q.invoke_action(true)
-      return true
+    if menu_push_q_get() then
+      if pred.q.get_push_state() then
+        pred.q.invoke_action(true)
+        return true
+      end
     end
-    if menu.push_w:get() then
+    if menu_push_w_get() then
       if pred.w.get_push_state() then
         pred.w.invoke_action(true)
         return true
@@ -855,7 +882,7 @@ local move_to_mouse = function(d)
     if orb.combat.target then
       p1 = orb.combat.target.path.serverPos
     end
-    if menu.push:get() then
+    if menu.push:get() and menu.farm_setting.farm:get() then
       local res = pred.aa.get_push_result()
       if res then
         p1 = res.obj.path.serverPos

@@ -1,4 +1,5 @@
 local pred = module.internal('pred')
+local menu = module.load(header.id, 'menu')
 
 local obj = nil
 local tickID = 0
@@ -51,14 +52,13 @@ local get_prediction = function(delay, radius, bbox)
   if game.tickID ~= tickID then
     -- seems game.tickID ~= tickID use this way reduce the call time
     obj = get_nearest_minion_to_mouse()
-    minion_count = get_minion_count_inrange(pos,radius)
     tickID = game.tickID
   end
   if obj then
     local p1 = player.path.serverPos2D
     local p2 = pred.core.get_pos_after_time(obj, delay)
     if p1:dist(p2) < (bbox and radius+obj.boundingRadius or radius) then
-      return obj, p2, minion_count
+      return obj, p2
     end
   end
 end

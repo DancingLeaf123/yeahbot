@@ -9,7 +9,6 @@ local flash = module.load(header.id, 'spell/flash')
 local input = {
   delay = e.delay,
   radius = 0,
-  -- dashRadius = 0,
   dashRadius = e.radius + flash.radius,
   boundingRadiusModSource = 0,
   boundingRadiusModTarget = 0,

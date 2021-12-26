@@ -15,7 +15,7 @@ orb.combat.register_f_pre_tick(function()
   spell.r2.on_update_buff()
   spell.r2.on_remove_buff()
   spell.r1.on_remove_buff()
-  -- core.ai.get_action()
+  core.ai.get_action()
 end)
 
 local on_draw = function()
@@ -26,7 +26,7 @@ local on_draw = function()
   core.draw.e_aa()
 
   --
-  -- drawtest.draw_W_range()
+  drawtest.draw_W_range()
   drawtest.draw_Q_range()
   drawtest.target_near_range()
 end

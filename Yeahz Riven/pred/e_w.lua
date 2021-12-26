@@ -5,6 +5,7 @@ local pred = module.internal('pred')
 local w = module.load(header.id, 'spell/w')
 local e = module.load(header.id, 'spell/e')
 local push = module.load(header.id, 'pred/push')
+local menu = module.load(header.id, 'menu')
 
 local input = {
   delay = e.delay,
@@ -65,10 +66,12 @@ local get_push_state = function()
   if get_spell_state() then
     local obj, pos = push.get_prediction(get_total_delay(), get_total_radius())
     if obj then
-      local p1 = pred.present.get_source_pos(player)
-      local p2 = p1:lerp(pos, 250/p1:dist(pos))
-      res = {obj = obj, pos = p2}
-      return res
+      if (obj.team == TEAM_NEUTRAL and menu.farm_setting.jungle_clear.push_e:get()) or (obj.team == TEAM_ENEMY and menu.farm_setting.lane_clear.push_e:get()) then
+        local p1 = pred.present.get_source_pos(player)
+        local p2 = p1:lerp(pos, 250/p1:dist(pos))
+        res = {obj = obj, pos = p2}
+        return res
+      end
     end
   end
 end

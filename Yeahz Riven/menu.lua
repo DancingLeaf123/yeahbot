@@ -1,8 +1,27 @@
 local Mymenu = menu('Yeahz_riven', 'Yeahz Riven')
 
+-- if menu.farm_setting.lane_clear.push_q:get()
+-- if menu.farm_setting.lane_clear.push_w:get()
+-- if menu.farm_setting.lane_clear.push_e:get()
+
+-- Mymenu.farm_setting:keybind('farm', 'Farm toggle', 'nil', "L")
+
+
 Mymenu:header('header_push', 'Panic clear')
-Mymenu:boolean('push_w', 'Use W', true)
-Mymenu:boolean('push_e', 'Use E', true)
+Mymenu:menu('farm_setting', 'Farm setting')
+Mymenu.farm_setting:keybind('farm', 'Farm toggle', 'nil', "L")
+Mymenu.farm_setting:menu('lane_clear', 'Lane_clear')
+Mymenu.farm_setting.lane_clear:boolean('push_q', 'Use Q', true)
+Mymenu.farm_setting.lane_clear:slider('push_q_count', '   ^== Use Q minions >=', 1, 1, 6, 1)
+Mymenu.farm_setting.lane_clear:boolean('push_w', 'Use W', true)
+Mymenu.farm_setting.lane_clear:slider('push_w_count', '   ^== Use W minions >=', 1, 1, 6, 1)
+Mymenu.farm_setting.lane_clear:boolean('push_e', 'Use E', true)
+Mymenu.farm_setting:menu('jungle_clear', 'Jungle_clear')
+Mymenu.farm_setting.jungle_clear:boolean('push_q', 'Use Q', true)
+Mymenu.farm_setting.jungle_clear:slider('push_q_count', '   ^== Use Q minions >=', 1, 1, 6, 1)
+Mymenu.farm_setting.jungle_clear:boolean('push_w', 'Use W', true)
+Mymenu.farm_setting.jungle_clear:slider('push_w_count', '   ^== Use W minions >=', 1, 1, 6, 1)
+Mymenu.farm_setting.jungle_clear:boolean('push_e', 'Use E', true)
 Mymenu:keybind('push', 'Panic clear key', 'V', nil)
 
 --Mymenu:header('header_harass', 'Harass')

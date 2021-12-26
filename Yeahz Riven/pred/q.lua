@@ -4,6 +4,7 @@ local pred = module.internal('pred')
 
 local q = module.load(header.id, 'spell/q')
 local push = module.load(header.id, 'pred/push')
+local menu = module.load(header.id, 'menu')
 
 local source = nil
 
@@ -18,9 +19,6 @@ local input = {
 local f = function(res, obj, dist)
   if dist > 1500 then return end
   if pred.present.get_prediction(input, obj, source) then
-    -- local rpos = pred.present.get_prediction(input, obj, source)
-    -- print("rpos",rpos.x,rpos.y)
-    -- print(obj.charName)
     res.obj = obj
     return true
   end
@@ -61,7 +59,7 @@ local invoke_action = function(pause)
 end
 
 local get_total_radius = function()
-  return q.radius() + player.attackRange - 80
+  return q.radius() + player.boundingRadius + player.attackRange - 80
 end
 
 local get_display_radius = function()
@@ -75,11 +73,18 @@ end
 local get_push_state = function()
   if get_spell_state() then
     local obj = push.get_prediction(get_total_delay(), get_total_radius())
-    if obj then
-      if push.get_minion_count_inrange(obj.pos,225) >= 1 then
-        print("push.get_minion_count_inrange(rpos,input.radius) >= 2",push.get_minion_count_inrange(obj.pos,225))
-        res = {obj = obj}
-        return res
+    if obj and menu.farm_setting.farm:get() then
+      if obj.team == TEAM_ENEMY and menu.farm_setting.lane_clear.push_q:get() then
+        if push.get_minion_count_inrange(player.pos, get_total_radius()) >= menu.farm_setting.lane_clear.push_q_count.value or q.slot.stacks >= 1 then
+          res = {obj = obj}
+          return res
+        end
+      end
+      if (obj.team == TEAM_NEUTRAL and menu.farm_setting.jungle_clear.push_q:get()) then
+        if push.get_minion_count_inrange(player.pos, get_total_radius()) >= menu.farm_setting.jungle_clear.push_q_count.value or (obj.highValue) or q.slot.stacks >= 1 then
+          res = {obj = obj}
+          return res
+        end
       end
     end
   end
