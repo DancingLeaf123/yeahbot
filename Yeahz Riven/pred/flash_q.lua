@@ -2,7 +2,7 @@ local TS = module.internal('TS')
 local orb = module.internal('orb')
 local pred = module.internal('pred')
 
-local menu = module.load('menu')
+local menu = module.load(header.id, 'menu')
   
 local q = module.load(header.id, 'spell/q')
 local flash = module.load(header.id, 'spell/flash')

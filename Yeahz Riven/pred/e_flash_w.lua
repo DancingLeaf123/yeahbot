@@ -32,6 +32,7 @@ local get_prediction = function()
 end
 
 local get_spell_state = function()
+  print (w.slot.cooldown)
   return e.is_ready() and flash.is_ready(0.150) and w.is_ready(0.150)
 end
 

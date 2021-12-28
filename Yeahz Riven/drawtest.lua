@@ -72,8 +72,7 @@ local permashow = function ()
     -- end
     -- print("SC_H",SC_H)
     local v = graphics.world_to_screen(player.pos)
-    for key,value in pairsByKeys(toggle_list) do
-        print(key,value)
+    for key,value in pairsByKeys(toggle_list) do 
         local x, y = graphics.text_area(key.." "..value[2].." :", font_size)
         graphics.draw_text_2D(('%s [%s]:'):format(key,value[2]), font_size, init_W, init_H, COLOR_WHITE)
         graphics.draw_text_2D(('  %s'):format(value[1] and "ON" or "OFF"), font_size, init_W + x, init_H, value[1] and COLOR_GREEN or COLOR_RED)

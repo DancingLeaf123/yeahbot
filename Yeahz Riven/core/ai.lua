@@ -331,7 +331,7 @@ local general = function()
             return true
           end
           pre_r2 = true
-          local pos = e_flash_w.pos
+          local pos = e_flash_q.pos
           if math.random()*100 <= menu.r2_flash:get() then
             pre_r2 = false
             local d = player.path.serverPos2D:dist(pos)
