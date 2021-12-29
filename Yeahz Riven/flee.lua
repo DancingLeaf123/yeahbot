@@ -73,9 +73,9 @@ local WallJump = function ()
   local wallCheck = GetFirstWallPoint(player.pos, mousePos, 25)
   if (wallCheck ~= nil) then
     wallCheck = GetFirstWallPoint(wallCheck:to3D(), mousePos, 5)
-    print("3",GetPathLength(player.path:calcPos(wallCheck:to3D())))
-    print("move speed",player.moveSpeed)
-    print(GetPathLength(player.path:calcPos(wallCheck:to3D()))/player.moveSpeed)
+    -- print("3",GetPathLength(player.path:calcPos(wallCheck:to3D())))
+    -- print("move speed",player.moveSpeed)
+    -- print(GetPathLength(player.path:calcPos(wallCheck:to3D()))/player.moveSpeed)
     q_t = GetPathLength(player.path:calcPos(wallCheck:to3D()))/player.moveSpeed
   -- elseif not q then
   end
@@ -147,7 +147,7 @@ local WallJump = function ()
       local checkPoint = vec3(0, 0, 0)
       if (currentStep == 0) then
           currentStep = step;
-          checkPoint = wallPosition + 440 * direction:to3D();
+          checkPoint = wallPosition + 450 * direction:to3D();
       else
           checkPoint = wallPosition + 440 * direction:rotate(currentAngle):to3D();
       end
@@ -159,7 +159,7 @@ local WallJump = function ()
             local wallPositionOpposite = firstWallPoint:to3D();
             -- local p,n = player.path:calcPos(wallPositionOpposite)
             -- print("?",GetPathLength(player.path:calcPos(wallPositionOpposite)))
-            if (GetPathLength(player.path:calcPos(wallPositionOpposite)) - player.pos:dist(wallPositionOpposite) > 200) then
+            if (GetPathLength(player.path:calcPos(wallPositionOpposite)) - player.pos:dist(wallPositionOpposite) > 210) then
               player:move(movePosition)
               if q then
                 -- and Orthant_2D(mouse_direction) == Orthant_2D(player.direction2D)
@@ -169,9 +169,9 @@ local WallJump = function ()
               end
               graphics.draw_line(wallPositionOpposite, wallPosition, 2, 0xFFFFFFFF)
               graphics.draw_circle(wallPosition, 50, 2, 0xFF008000, 24)
-              if (player.pos:distSqr(wallPositionOpposite) < (480 - player.boundingRadius / 2)^2 and qSlot.stacks >= 2) then
+              if (player.pos2D:distSqr(wallPositionOpposite:to2D()) < (470 - player.boundingRadius / 2)^2 and qSlot.stacks >= 2) then
                 graphics.draw_line(wallPositionOpposite, wallPosition, 2, 0xFF008000)
-                print("jump dist", player.pos:dist(wallPositionOpposite))
+                print("jump dist", player.pos2D:dist(wallPositionOpposite:to2D()))
                 if e then
                   player:castSpell('pos', 2, wallPositionOpposite)
                 elseif q then
