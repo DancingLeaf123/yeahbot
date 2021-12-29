@@ -31,8 +31,7 @@ local get_prediction = function()
   return TS.get_result(f, TS.filter_set[1], false, true)
 end
 
-local get_spell_state = function()
-  print (w.slot.cooldown)
+local get_spell_state = function()  
   return e.is_ready() and flash.is_ready(0.150) and w.is_ready(0.150)
 end
 
