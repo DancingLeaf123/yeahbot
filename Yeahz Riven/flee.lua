@@ -6,6 +6,7 @@ local spell = module.load(header.id, 'spell/main')
 
 local last_e = 0
 local last_q = 0
+local last_backmove = 0
 
 local bug_wallJumP_pos = {
   start_1 = vec3(9190.0234375,53.026031494141,7198.9057617188),
@@ -69,15 +70,50 @@ local enemy_inrange = function (dist)
   end
 end
 
+local Myangle_between = function(d1,d2)
+  -- d1 d2 should be vec2 
+  local nd1 = d1:norm()
+  local nd2 = d2:norm()
+  local a = mathf.angle_between(vec2(0,0), nd1, nd2)
+  return math.abs(a * 180 / mathf.PI)
+end
+
+local cantjump = function ()
+  if not player.path.isDashing then
+    player:move(mousePos)
+  end
+  if enemy_inrange(enemy_range) then
+    if q and qSlot.stacks < 2 and not player.path.isDashingthen and Myangle_between(mouse_direction,player.direction2D) < 35 then
+      player:castSpell('pos', 0, mousePos)
+    elseif e and not player.path.isDashingthen then
+      player:castSpell('pos', 2, mousePos)
+    elseif q and not e and not player.path.isDashingthen and Myangle_between(mouse_direction,player.direction2D) < 35 then
+      player:castSpell('pos', 0, mousePos)
+    end
+  end
+  if q then
+    if qSlot.stacks < 1 then
+      if game.time - last_q > 3.5 and not player.path.isDashingthen and  Myangle_between(mouse_direction,player.direction2D) < 35 then
+        player:castSpell('pos', 0, mousePos)
+        last_q = game.time
+      end
+    elseif e and not player.path.isDashingthen then
+      player:castSpell('pos', 2, mousePos)
+    elseif  game.time - last_q > 3.5 and not player.path.isDashingthen and  Myangle_between(mouse_direction,player.direction2D) < 35 then 
+      player:castSpell('pos', 0, mousePos)
+      last_q = game.time
+    end
+  elseif e and not player.path.isDashingthen then
+    player:castSpell('pos', 2, mousePos)
+  end
+end
+
+
 local WallJump = function ()
   local wallCheck = GetFirstWallPoint(player.pos, mousePos, 25)
   if (wallCheck ~= nil) then
     wallCheck = GetFirstWallPoint(wallCheck:to3D(), mousePos, 5)
-    -- print("3",GetPathLength(player.path:calcPos(wallCheck:to3D())))
-    -- print("move speed",player.moveSpeed)
-    -- print(GetPathLength(player.path:calcPos(wallCheck:to3D()))/player.moveSpeed)
     q_t = GetPathLength(player.path:calcPos(wallCheck:to3D()))/player.moveSpeed
-  -- elseif not q then
   end
   
   local movePosition = wallCheck ~= nil and spell.q.is_ready(q_t) and wallCheck:to3D() or mousePos
@@ -88,8 +124,8 @@ local WallJump = function ()
   if wallCheck ~= nil then
     local wallPosition = movePosition;
     local direction = (mousePos:to2D() - wallPosition:to2D()):norm()
-    local maxAngle = 25
-    local step = maxAngle / 10
+    local maxAngle = 10
+    local step = maxAngle / 15
     local currentAngle = 0;
     local currentStep = 0;
     local jumpTriggered = false
@@ -121,7 +157,6 @@ local WallJump = function ()
       graphics.draw_circle(Truestart_pos, 50, 2, 0xFF008000, 24)
       if qSlot.stacks >= 2 and player.pos2D:dist(Truestart_pos:to2D()) < 2.5  then
         if e then
-          -- print("player.pos2D:dist(Truestart_pos:to2D())",player.pos2D:dist(Truestart_pos:to2D()))
           last_e = game.time
           player:castSpell('pos', 2, Min_bugEnd_pos)
         end
@@ -132,7 +167,6 @@ local WallJump = function ()
       do return end
     end
 
-    -- normal jump
     while(true)
     do
       if (currentStep > maxAngle and currentAngle < 0) then
@@ -147,9 +181,9 @@ local WallJump = function ()
       local checkPoint = vec3(0, 0, 0)
       if (currentStep == 0) then
           currentStep = step;
-          checkPoint = wallPosition + 450 * direction:to3D();
+          checkPoint = wallPosition + 500 * direction:to3D();
       else
-          checkPoint = wallPosition + 440 * direction:rotate(currentAngle):to3D();
+          checkPoint = wallPosition + 500 * direction:rotate(currentAngle):to3D();
       end
       if not(navmesh.isWall(checkPoint) or navmesh.isStructure(checkPoint)) then
         wallCheck = GetFirstWallPoint(checkPoint, wallPosition);
@@ -157,135 +191,90 @@ local WallJump = function ()
           local firstWallPoint = GetFirstWallPoint(wallCheck:to3D(), wallPosition);
           if (firstWallPoint ~= nil) then
             local wallPositionOpposite = firstWallPoint:to3D();
-            -- local p,n = player.path:calcPos(wallPositionOpposite)
-            -- print("?",GetPathLength(player.path:calcPos(wallPositionOpposite)))
-            if (GetPathLength(player.path:calcPos(wallPositionOpposite)) - player.pos:dist(wallPositionOpposite) > 210) then
-              player:move(movePosition)
-              if q then
-                -- and Orthant_2D(mouse_direction) == Orthant_2D(player.direction2D)
-                if qSlot.stacks < 2 then
+            if (GetPathLength(player.path:calcPos(wallPositionOpposite)) - player.pos:dist(wallPositionOpposite) > 210) then 
+              print(player.pos2D:dist(movePosition:to2D()))
+              if q and qSlot.stacks < 2 and Myangle_between(mouse_direction,player.direction2D) < 35 then
                   player:castSpell('pos', 0, mousePos)
+                  -- break
+              end
+              if player.pos2D:dist(movePosition:to2D()) <= 5 and Myangle_between(player.direction2D, (mousePos2D - player.pos2D))  > 35 then
+                if not player.path.isDashing then
+                  player:move(movePosition + (movePosition-mousePos):norm() * 100)
+                  last_backmove = game.time
+                  if player.pos2D:dist(movePosition:to2D()) >= 40 then
+                    break
+                  end 
                 end
+              elseif not player.path.isDashing then
+                player:move(movePosition)
               end
               graphics.draw_line(wallPositionOpposite, wallPosition, 2, 0xFFFFFFFF)
-              graphics.draw_circle(wallPosition, 50, 2, 0xFF008000, 24)
-              if (player.pos2D:distSqr(wallPositionOpposite:to2D()) < (470 - player.boundingRadius / 2)^2 and qSlot.stacks >= 2) then
+              graphics.draw_circle(wallPosition, 10, 2, 0xFF008000, 24)
+              if (player.pos2D:distSqr(wallPositionOpposite:to2D()) < (500 - player.boundingRadius / 2)^2 and qSlot.stacks >= 2) then
+                local max_myangle = 0
                 graphics.draw_line(wallPositionOpposite, wallPosition, 2, 0xFF008000)
-                print("jump dist", player.pos2D:dist(wallPositionOpposite:to2D()))
                 if e then
                   player:castSpell('pos', 2, wallPositionOpposite)
+                  last_e = game.time
                 elseif q then
-                  player:castSpell('pos', 0, wallPositionOpposite)
+                  local myangle = Myangle_between(player.direction2D, (wallPositionOpposite:to2D() - player.pos2D))
+                  print("myangle",myangle,game.time)
+                  print("jump dist", player.pos2D:dist(wallPositionOpposite:to2D()))
+                  print("player.path.isActive",player.path.isActive)
+                  if max_myangle ~= myangle then
+                    max_myangle = max_myangle and max_myangle > myangle or myangle
+                  end
+                  print("max_myangle",max_myangle)
+                  print("-out",game.time - last_backmove)
+                  print("bd",player.boundingRadius)
+                  if game.time - last_e < 0.5 then
+                    player:castSpell('pos', 0, wallPositionOpposite)
+                    --  and
+                    -- and game.time - last_backmove > 0.1
+                  elseif player.pos2D:dist(wallPosition:to2D()) <= 40 and myangle < 35 then
+                    print("-",game.time - last_backmove)
+                    player:castSpell('pos', 0, wallPositionOpposite)
+                  end
                 end
                 jumpTriggered = true
                 break;
               end
               IsJumpPossible = true 
             else
-              player:move(mousePos)
-              if enemy_inrange(enemy_range) then
-                if q and qSlot.stacks < 1 and not player.path.isDashingthen and Orthant_2D(mouse_direction) == Orthant_2D(player.direction2D) then
-                  player:castSpell('pos', 0, mousePos)
-                elseif e and not player.path.isDashingthen then
-                  player:castSpell('pos', 2, mousePos)
-                elseif q and not player.path.isDashingthen and Orthant_2D(mouse_direction) == Orthant_2D(player.direction2D) then
-                  player:castSpell('pos', 0, mousePos)
-                end
-              end
-              if q then
-                if qSlot.stacks < 1 then
-                  if game.time - last_q > 3.5 and not player.path.isDashingthen and  Orthant_2D(mouse_direction) == Orthant_2D(player.direction2D) then
-                    player:castSpell('pos', 0, mousePos)
-                    last_q = game.time
-                  end
-                elseif e and not player.path.isDashingthen then
-                  player:castSpell('pos', 2, mousePos)
-                elseif  game.time - last_q > 3.5 and not player.path.isDashingthen and  Orthant_2D(mouse_direction) == Orthant_2D(player.direction2D) then 
-                  player:castSpell('pos', 0, mousePos)
-                  last_q = game.time
-                end
-              elseif e and not player.path.isDashingthen then
-                player:castSpell('pos', 2, mousePos)
-              end
+              cantjump()
+              break
             end
           end
         end
+      -- else
+      --   player:move(mousePos)
+      --   break;
       end
     end
   else
-    player:move(mousePos)
-    if enemy_inrange(enemy_range) then
-      if q and qSlot.stacks < 2 and not player.path.isDashingthen and Orthant_2D(mouse_direction) == Orthant_2D(player.direction2D) then
-        player:castSpell('pos', 0, mousePos)
-      elseif e and not player.path.isDashingthen then
-        player:castSpell('pos', 2, mousePos)
-      elseif q and not e and not player.path.isDashingthen and Orthant_2D(mouse_direction) == Orthant_2D(player.direction2D) then
-        player:castSpell('pos', 0, mousePos)
-      end
-    end
-    if q then
-      if qSlot.stacks < 1 then
-        if game.time - last_q > 3.5 and not player.path.isDashingthen and  Orthant_2D(mouse_direction) == Orthant_2D(player.direction2D) then
-          player:castSpell('pos', 0, mousePos)
-          last_q = game.time
-        end
-      elseif e and not player.path.isDashingthen then
-        player:castSpell('pos', 2, mousePos)
-      elseif  game.time - last_q > 3.5 and not player.path.isDashingthen and  Orthant_2D(mouse_direction) == Orthant_2D(player.direction2D) then 
-        player:castSpell('pos', 0, mousePos)
-        last_q = game.time
-      end
-    elseif e and not player.path.isDashingthen then
-      player:castSpell('pos', 2, mousePos)
-    end
+    cantjump()
   end
 end
 
 local flee = function ()
-  if menu.flee_setting.flee:get() then
-
+  if menu.flee_setting.flee:get() then 
     qSlot = player:spellSlot(0)
     q = pred.q.get_spell_state()
     e = pred.e.get_spell_state()
     w = pred.w.get_action_state()
     mouse_direction = (mousePos2D - player.pos2D):norm()
-    -- print("player.direction2D",player.direction2D.x,player.direction2D.y)
-    -- print("mouse_direction",mouse_direction.x,mouse_direction.y)
     if w then
       pred.w.invoke_action(true)
     end
-    -- and not e
-    -- if enemy_inrange(enemy_range) and not wallCheck then
-    --   if q and qSlot.stacks < 2 and not player.path.isDashingthen and Orthant_2D(mouse_direction) == Orthant_2D(player.direction2D) then
-    --     player:castSpell('pos', 0, mousePos)
-    --   elseif e and not player.path.isDashingthen then
-    --     player:castSpell('pos', 2, mousePos)
-    --   elseif q and not e and not player.path.isDashingthen and Orthant_2D(mouse_direction) == Orthant_2D(player.direction2D) then
-    --     player:castSpell('pos', 0, mousePos)
-    --   end
-    -- end
     if keyboard.isKeyDown(0x1) and menu.flee_setting.quickrun:get() == 2 then
-      if q and qSlot.stacks < 2 and not player.path.isDashingthen and Orthant_2D(mouse_direction) == Orthant_2D(player.direction2D) then
+      if q and qSlot.stacks < 2 and not player.path.isDashingthen and Myangle_between(mouse_direction,player.direction2D) < 35 then
         player:castSpell('pos', 0, mousePos)
       elseif e and not player.path.isDashingthen then
         player:castSpell('pos', 2, mousePos)
-      elseif q and not e and not player.path.isDashingthen and Orthant_2D(mouse_direction) == Orthant_2D(player.direction2D) then
+      elseif q and not e and not player.path.isDashingthen and Myangle_between(mouse_direction,player.direction2D) < 35 then
         player:castSpell('pos', 0, mousePos)
       end
     end
-    -- if q then
-    --   if wallCheck then
-    --     if qSlot.stacks < 2 then
-    --       player:castSpell('pos', 0, mousePos)
-    --       last_q = game.time
-    --     end
-    --   elseif game.time - last_q > 3.5 and not player.path.isDashingthen and  Orthant_2D(mouse_direction) == Orthant_2D(player.direction2D) then
-    --     player:castSpell('pos', 0, mousePos)
-    --     last_q = game.time
-    --   end
-    -- elseif (not q or qSlot.stacks >=1) and not wallCheck and not player.path.isDashingthen then
-    --   player:castSpell('pos', 2, mousePos)
-    -- end
     WallJump()
   end
 end
