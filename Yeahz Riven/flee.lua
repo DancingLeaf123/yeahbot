@@ -118,14 +118,16 @@ local WallJump = function ()
   
   local movePosition = wallCheck ~= nil and spell.q.is_ready(q_t) and wallCheck:to3D() or mousePos
   if not (wallCheck ~= nil and spell.q.is_ready(q_t) and wallCheck:to3D()) then
-    player:move(movePosition)
+    if not player.path.isDashing then
+      player:move(mousePos)
+    end
   end
   local IsJumpPossible = false
   if wallCheck ~= nil then
     local wallPosition = movePosition;
     local direction = (mousePos:to2D() - wallPosition:to2D()):norm()
-    local maxAngle = 10
-    local step = maxAngle / 15
+    local maxAngle = 20
+    local step = maxAngle / 5
     local currentAngle = 0;
     local currentStep = 0;
     local jumpTriggered = false
@@ -181,58 +183,65 @@ local WallJump = function ()
       local checkPoint = vec3(0, 0, 0)
       if (currentStep == 0) then
           currentStep = step;
-          checkPoint = wallPosition + 500 * direction:to3D();
+          checkPoint = wallPosition + 480 * direction:to3D();
       else
-          checkPoint = wallPosition + 500 * direction:rotate(currentAngle):to3D();
+          checkPoint = wallPosition + 480 * direction:rotate(currentAngle):to3D();
       end
       if not(navmesh.isWall(checkPoint) or navmesh.isStructure(checkPoint)) then
-        wallCheck = GetFirstWallPoint(checkPoint, wallPosition);
+        wallCheck = GetFirstWallPoint(checkPoint, wallPosition); 
         if (wallCheck ~= nil) then
           local firstWallPoint = GetFirstWallPoint(wallCheck:to3D(), wallPosition);
           if (firstWallPoint ~= nil) then
             local wallPositionOpposite = firstWallPoint:to3D();
             if (GetPathLength(player.path:calcPos(wallPositionOpposite)) - player.pos:dist(wallPositionOpposite) > 210) then 
-              print(player.pos2D:dist(movePosition:to2D()))
-              if q and qSlot.stacks < 2 and Myangle_between(mouse_direction,player.direction2D) < 35 then
-                  player:castSpell('pos', 0, mousePos)
-                  -- break
+              if not player.path.isDashing and game.time - last_backmove > 0.3 then
+                -- player:move(wallPosition + (wallPosition-wallPositionOpposite):norm() * 20)
+                player:move(wallPosition)
               end
-              if player.pos2D:dist(movePosition:to2D()) <= 5 and Myangle_between(player.direction2D, (mousePos2D - player.pos2D))  > 35 then
-                if not player.path.isDashing then
-                  player:move(movePosition + (movePosition-mousePos):norm() * 100)
+              -- print("q_t",q_t)
+              print("dist",player.pos:dist(wallPosition))
+              if q and qSlot.stacks < 2 then
+                if q_t < 3.5 and  qSlot.stacks < 2 then
+                  player:castSpell('pos', 0, wallPositionOpposite)
+                  player:move(wallPosition + (wallPosition-wallPositionOpposite):norm() * 100)
                   last_backmove = game.time
-                  if player.pos2D:dist(movePosition:to2D()) >= 40 then
-                    break
-                  end 
+                elseif q_t < 7 and  qSlot.stacks < 1 then
+                  player:castSpell('pos', 0, wallPositionOpposite )
+                  player:move(wallPosition + (wallPosition-wallPositionOpposite):norm() * 100)
+                  last_backmove = game.time
+                elseif q_t > 7 then
+                  do return end
                 end
-              elseif not player.path.isDashing then
-                player:move(movePosition)
               end
+              -- if player.pos2D:dist(movePosition:to2D()) <= 5 and Myangle_between(player.direction2D, (wallPositionOpposite:to2D() - player.pos2D))  > 35 then
+              --   if not player.path.isDashing then
+              --     player:move(movePosition + (movePosition-wallPositionOpposite):norm() * 100)
+              --     last_backmove = game.time
+              --     -- if player.pos2D:dist(movePosition:to2D()) >= 40 then
+              --     --   do return end
+              --     -- end 
+              --   end
+              -- end
               graphics.draw_line(wallPositionOpposite, wallPosition, 2, 0xFFFFFFFF)
               graphics.draw_circle(wallPosition, 10, 2, 0xFF008000, 24)
-              if (player.pos2D:distSqr(wallPositionOpposite:to2D()) < (500 - player.boundingRadius / 2)^2 and qSlot.stacks >= 2) then
+              -- graphics.draw_circle(wallPosition + (wallPosition-wallPositionOpposite):norm() * 20, 10, 2, 0xFF008000, 24)
+              if (player.pos2D:distSqr(wallPositionOpposite:to2D()) < (480 - player.boundingRadius / 2)^2 and qSlot.stacks >= 2) then
                 local max_myangle = 0
                 graphics.draw_line(wallPositionOpposite, wallPosition, 2, 0xFF008000)
                 if e then
                   player:castSpell('pos', 2, wallPositionOpposite)
                   last_e = game.time
                 elseif q then
-                  local myangle = Myangle_between(player.direction2D, (wallPositionOpposite:to2D() - player.pos2D))
+                  local myangle = Myangle_between(player.direction2D, (wallPositionOpposite:to2D() - wallPosition:to2D()))
                   print("myangle",myangle,game.time)
                   print("jump dist", player.pos2D:dist(wallPositionOpposite:to2D()))
-                  print("player.path.isActive",player.path.isActive)
                   if max_myangle ~= myangle then
                     max_myangle = max_myangle and max_myangle > myangle or myangle
                   end
-                  print("max_myangle",max_myangle)
-                  print("-out",game.time - last_backmove)
-                  print("bd",player.boundingRadius)
                   if game.time - last_e < 0.5 then
                     player:castSpell('pos', 0, wallPositionOpposite)
-                    --  and
-                    -- and game.time - last_backmove > 0.1
-                  elseif player.pos2D:dist(wallPosition:to2D()) <= 40 and myangle < 35 then
-                    print("-",game.time - last_backmove)
+                  elseif player.pos2D:dist(wallPosition:to2D()) <= player.boundingRadius and myangle <= 60 and game.time - last_backmove > 0.3 then
+                    print("game.time - last_backmove",game.time - last_backmove)
                     player:castSpell('pos', 0, wallPositionOpposite)
                   end
                 end
@@ -242,7 +251,7 @@ local WallJump = function ()
               IsJumpPossible = true 
             else
               cantjump()
-              break
+              -- break
             end
           end
         end
