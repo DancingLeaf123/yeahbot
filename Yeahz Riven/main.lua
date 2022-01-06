@@ -11,11 +11,14 @@ local pushtest = module.load(header.id, 'pushtest')
 
 local drawtest = module.load(header.id, 'drawtest')
 
+local chase = module.load(header.id, 'chase')
+
 orb.combat.register_f_pre_tick(function()
   spell.r2.on_update_buff()
   spell.r2.on_remove_buff()
   spell.r1.on_remove_buff()
   core.ai.get_action()
+  chase.chase()
 end)
 
 local on_draw = function()
@@ -30,6 +33,7 @@ local on_draw = function()
   drawtest.draw_Q_range()
   drawtest.target_near_range()
   drawtest.permashow()
+  chase.draw_2D_chase()
 end
 
 local on_recv_spell = function(proc)

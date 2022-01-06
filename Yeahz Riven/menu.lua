@@ -56,4 +56,6 @@ Mymenu:keybind('combat', 'Combat key', 'Space', nil)
 Mymenu:menu('flee_setting', 'Flee setting')
 Mymenu.flee_setting:keybind('flee', 'Flee key', 'Z', nil)
 Mymenu.flee_setting:dropdown('quickrun', 'Save Q3,E Modifier', 2, {'None', 'LBM Down', 'Hotkey',})
+Mymenu:dropdown('chase', 'chase target with Q and E', 2, {'None', 'LBM Down', 'Hotkey',})
+
 return Mymenu

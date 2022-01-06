@@ -225,7 +225,7 @@ local WallJump = function ()
               graphics.draw_line(wallPositionOpposite, wallPosition, 2, 0xFFFFFFFF)
               graphics.draw_circle(wallPosition, 10, 2, 0xFF008000, 24)
               -- graphics.draw_circle(wallPosition + (wallPosition-wallPositionOpposite):norm() * 20, 10, 2, 0xFF008000, 24)
-              if (player.pos2D:distSqr(wallPositionOpposite:to2D()) < (480 - player.boundingRadius / 2)^2 and qSlot.stacks >= 2) then
+              if (player.pos2D:distSqr(wallPositionOpposite:to2D()) < (510 - player.boundingRadius / 2)^2 and qSlot.stacks >= 2) then
                 local max_myangle = 0
                 graphics.draw_line(wallPositionOpposite, wallPosition, 2, 0xFF008000)
                 if e then
@@ -240,7 +240,7 @@ local WallJump = function ()
                   end
                   if game.time - last_e < 0.5 then
                     player:castSpell('pos', 0, wallPositionOpposite)
-                  elseif player.pos2D:dist(wallPosition:to2D()) <= player.boundingRadius and myangle <= 60 and game.time - last_backmove > 0.3 then
+                  elseif player.pos2D:dist(wallPosition:to2D()) <= player.boundingRadius/4 and myangle <= 60 and game.time - last_backmove > 0.3 then
                     print("game.time - last_backmove",game.time - last_backmove)
                     player:castSpell('pos', 0, wallPositionOpposite)
                   end
@@ -330,4 +330,5 @@ end)
 return {
   IsJumpPossible = IsJumpPossible,
   WallJump = WallJump,
+  GetFirstWallPoint = GetFirstWallPoint,
 }
