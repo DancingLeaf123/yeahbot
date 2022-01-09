@@ -199,7 +199,7 @@ local WallJump = function ()
                 player:move(wallPosition)
               end
               -- print("q_t",q_t)
-              print("dist",player.pos:dist(wallPosition))
+              -- print("dist",player.pos:dist(wallPosition))
               if q and qSlot.stacks < 2 then
                 if q_t < 3.5 and  qSlot.stacks < 2 then
                   player:castSpell('pos', 0, wallPositionOpposite)
@@ -233,15 +233,15 @@ local WallJump = function ()
                   last_e = game.time
                 elseif q then
                   local myangle = Myangle_between(player.direction2D, (wallPositionOpposite:to2D() - wallPosition:to2D()))
-                  print("myangle",myangle,game.time)
-                  print("jump dist", player.pos2D:dist(wallPositionOpposite:to2D()))
+                  -- print("myangle",myangle,game.time)
+                  -- print("jump dist", player.pos2D:dist(wallPositionOpposite:to2D()))
                   if max_myangle ~= myangle then
                     max_myangle = max_myangle and max_myangle > myangle or myangle
                   end
                   if game.time - last_e < 0.5 then
                     player:castSpell('pos', 0, wallPositionOpposite)
                   elseif player.pos2D:dist(wallPosition:to2D()) <= player.boundingRadius/4 and myangle <= 60 and game.time - last_backmove > 0.3 then
-                    print("game.time - last_backmove",game.time - last_backmove)
+                    -- print("game.time - last_backmove",game.time - last_backmove)
                     player:castSpell('pos', 0, wallPositionOpposite)
                   end
                 end

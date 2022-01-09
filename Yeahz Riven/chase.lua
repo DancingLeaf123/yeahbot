@@ -38,7 +38,7 @@ local chase = function()
     local e = spell.e.is_ready()
     local pred_e = pred.e.get_action_state()
     local pred_q = pred.q.get_action_state()
-    if TS.selected and menu.flash:get() then
+    if (TS.selected or spell.flash.is_ready()) and menu.flash:get() then
       local flash_q = pred.flash_q.get_action_state()
       local flash_w = pred.flash_w.get_action_state()
       local e_flash_w = pred.e_flash_w.get_action_state()
@@ -48,11 +48,11 @@ local chase = function()
           if q and not pred_q and not player.path.isDashing  then
             print("chaseing")
             print(final_tar.charName)
-            player:castSpell('obj', 0, final_tar)
+            player:castSpell('obj', 0, final_tar) 
           end
         end
       end
-    elseif final_tar and final_tar.isOnScreen then    
+    elseif final_tar and final_tar.isOnScreen  then    
       if not flee.GetFirstWallPoint(player.pos, final_tar.pos, 25) then
         if e and not pred_e and not player.path.isDashing then
           print("chaseing")
@@ -73,6 +73,7 @@ local draw_2D_chase = function ()
   if orb.menu.combat.key:get() then
     if keyboard.isKeyDown(0x1) and menu.chase:get() == 2 then
       graphics.draw_text_2D('chase', 14, game.cursorPos.x, game.cursorPos.y, 0xFFFFFFFF)
+      graphics.draw_circle(mousePos, 500, 2, 0xFFFFFFFF, 32)
     end
   end
 end

@@ -64,13 +64,32 @@ local get_total_delay = function()
   return e.delay
 end
 
+local enemy_range = 1200
+local enemy_inrange = function (dist)
+  for i=0, objManager.enemies_n-1 do
+    local obj = objManager.enemies[i]
+    -- print("obj.charName",obj.charName)
+    -- print("obj.isOnScreen",obj.isOnScreen)
+    -- print("obj.isDead",obj.isDead)
+    if player.pos2D:dist(obj.pos2D) < dist and not obj.isDead and obj.isTargetable  then
+      return true
+    end
+  end
+end
+
+local push_e_NE = function ()
+  return menu.farm_setting.lane_clear.push_e_NE:get() and not enemy_inrange(1200) or not menu.farm_setting.lane_clear.push_e_NE:get()
+end
+
 local get_push_state = function()
   if get_spell_state() then
     res.obj = player
     res.pos = vec2(mousePos.x, mousePos.z)
     if orb.core.cur_attack_target then
       if (orb.core.cur_attack_target.team == 300 and menu.farm_setting.jungle_clear.push_e:get()) or (orb.core.cur_attack_target.team == 200 and menu.farm_setting.lane_clear.push_e:get()) then
-        return true
+        if push_e_NE() then
+          return true
+        end
       end
     end
   end

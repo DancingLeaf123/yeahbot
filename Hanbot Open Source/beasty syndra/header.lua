@@ -67,7 +67,7 @@ return {
     -- 'stacks_sprite.png',
     -- 'timer_sprite.png',
   },
- 
+  
   author = 'Beasty',
 
   telegram_url = 'https://t.me/joinchat/I2UCckjpXDTxpFEOLmwbuA',
