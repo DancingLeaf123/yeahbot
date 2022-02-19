@@ -14,6 +14,7 @@ return {
     },
   },
   shard = {
+    "common",
     "chase",
     "drawtest",
     "flee",
@@ -58,7 +59,7 @@ description = [[
   better farm setting
   permashow
   
-
+  version 0219
   ++++++++++++++
   
   Some features are still in development

@@ -31,8 +31,9 @@ local on_draw = function()
   --
   drawtest.draw_W_range()
   drawtest.draw_Q_range()
-  drawtest.target_near_range()
+  -- drawtest.target_near_range()
   drawtest.permashow()
+  drawtest.common_draw()
   chase.draw_2D_chase()
 end
 

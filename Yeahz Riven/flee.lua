@@ -57,7 +57,12 @@ local Orthant_2D = function(d)
 end
 
 local q_t = 0
-local enemy_range = 1200
+
+
+local enemy_range = function ()
+  return menu.flee_setting.EDR_slider:get()
+end
+  
 local enemy_inrange = function (dist)
   for i=0, objManager.enemies_n-1 do
     local obj = objManager.enemies[i]
@@ -82,7 +87,7 @@ local cantjump = function ()
   if not player.path.isDashing then
     player:move(mousePos)
   end
-  if enemy_inrange(enemy_range) then
+  if enemy_inrange(enemy_range()) then
     if q and qSlot.stacks < 2 and not player.path.isDashingthen and Myangle_between(mouse_direction,player.direction2D) < 35 then
       player:castSpell('pos', 0, mousePos)
     elseif e and not player.path.isDashingthen then
@@ -294,7 +299,8 @@ local draw_2D = function ()
       graphics.draw_text_2D('quick cast flee', 14, game.cursorPos.x, game.cursorPos.y, 0xFFFFFFFF)
     end
   end
-  graphics.draw_circle(player.pos, enemy_range, 2, 0xFFFFFFFF, 24)
+
+
   -- if player.path.active and player.path.count>0 then
   --   for i = 0, player.path.count do
       

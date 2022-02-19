@@ -15,13 +15,26 @@ local flee = module.load(header.id, 'flee')
 local draw_Q_range = function ()
     if spell.q.is_ready() then
     end
-    graphics.draw_circle(player.pos, pred.q.get_total_radius(), 2, 0xff8fbe93, 64)
+    -- 0xff8fbe93
+    if menu.draw_setting.draw_Q:get() then
+        graphics.draw_circle(player.pos, pred.q.get_total_radius(), 2, menu.draw_setting.Q_color:get(), 48)
+    end
 end
 
 local draw_W_range = function ()
     if spell.w.is_ready() then
     end
-    graphics.draw_circle(player.pos, pred.w.get_total_radius(), 2, 0xff7ddd6b, 64)
+    -- 0xff7ddd6b
+    -- print("w",menu.draw_setting.W_color:get())
+    if menu.draw_setting.draw_W:get() then
+        graphics.draw_circle(player.pos, pred.w.get_total_radius(), 2, menu.draw_setting.W_color:get(), 48)
+    end
+end
+
+local draw_E_range = function ()
+    if menu.draw_setting.draw_E:get() then
+        graphics.draw_circle(player.pos, pred.e.get_total_radius(), 2, menu.draw_setting.E_color:get(), 48)
+    end
 end
 
 local VextorExtend =function(a, b, dist) return a + dist * (b-a):norm() end
@@ -32,11 +45,16 @@ local target_near_range = function ()
         local dist = player.pos:dist(obj.pos)
         local v = graphics.world_to_screen(obj.pos)
         if dist <= 2000 then
-            graphics.draw_line(player.pos, obj.pos, 10, 0x77FF0000)
+            graphics.draw_line(player.pos, obj.pos, 10, 0xff8fbe93)
         end
     end
 end
 
+local common_draw = function ()
+    if menu.draw_setting.draw_ER:get() then
+        graphics.draw_circle(player.pos, menu.draw_setting.EDR_slider:get(), 2, 0x88FFFFFF, 24)
+    end
+end
 
 
 local permashow = function ()
@@ -82,8 +100,10 @@ end
 
 
 return {
-    draw_W_range = draw_W_range,
     draw_Q_range = draw_Q_range,
+    draw_W_range = draw_W_range,  
+    draw_E_range = draw_E_range,
     target_near_range = target_near_range,
     permashow = permashow,
+    common_draw = common_draw,
 }
