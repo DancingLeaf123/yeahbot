@@ -78,7 +78,7 @@ return {
     如果您有一些反馈或功能建议，请与我联系
     t.me/Yeahz_hanbot3
   ]],
-  icon_url = "https://raw.githubusercontent.com/DancingLeaf123/LeetCode/main/icon.jpg",
+  icon_url = "https://raw.githubusercontent.com/DancingLeaf123/LeetCode/main/icon2.jpg",
   load = function()
     return player.charName == "Riven"
   end
