@@ -4,7 +4,7 @@ return {
   author_cn = "叶子",
   type = 'Champion',
   author = "Yeahz",
-  icon_url = 'https://i.imgur.com/FF9Jbs8.jpg',
+  icon_url = 'https://i.imgur.com/pEHKiUu.jpg',
   flag = {
     text = "Yeahz",
     color = {
