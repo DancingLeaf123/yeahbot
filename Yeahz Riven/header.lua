@@ -4,7 +4,7 @@ return {
   author_cn = "叶子",
   type = "Champion",
   author = "Yeahz",
-  icon_url = "https://i.imgur.com/pEHKiUu.jpg",
+  icon_url = "https://raw.githubusercontent.com/DancingLeaf123/LeetCode/main/icon.jpg",
   flag = {
     text = "Yeahz",
     color = {
