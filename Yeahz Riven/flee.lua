@@ -60,7 +60,7 @@ local q_t = 0
 
 
 local enemy_range = function ()
-  return menu.flee_setting.EDR_slider:get()
+  return menu.draw_setting.EDR_slider:get()
 end
   
 local enemy_inrange = function (dist)
