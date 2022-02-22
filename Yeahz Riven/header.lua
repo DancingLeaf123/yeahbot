@@ -57,7 +57,7 @@ return {
   better farm setting
   permashow
   
-  version 0219
+  version 0222 fix flee
   ++++++++++++++
   
   Some features are still in development
@@ -72,6 +72,7 @@ return {
     发育设置
     permashow
 
+    version 0222 修复 flee
     ++++++++++++++
   
     一些功能还在开发中
