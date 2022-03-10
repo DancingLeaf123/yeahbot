@@ -12,6 +12,7 @@ local pushtest = module.load(header.id, 'pushtest')
 local drawtest = module.load(header.id, 'drawtest')
 
 local chase = module.load(header.id, 'chase')
+local harass = module.load(header.id, 'harass')
 
 orb.combat.register_f_pre_tick(function()
   spell.r2.on_update_buff()
@@ -34,7 +35,7 @@ local on_draw = function()
   -- drawtest.target_near_range()
   drawtest.permashow()
   drawtest.common_draw()
-  chase.draw_2D_chase()
+  -- chase.draw_2D_chase()
 end
 
 local on_recv_spell = function(proc)

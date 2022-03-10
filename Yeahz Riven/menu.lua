@@ -67,7 +67,7 @@ Mymenu.flee_setting.flee:set('tooltip', 'Walljump towards the mouse')
 Mymenu.flee_setting:dropdown('quickrun', 'Save Q3,E Modifier', 2, {'None', 'LBM Down', 'Hotkey',})
 Mymenu.flee_setting.quickrun:set('tooltip', 'when active or enemy in range, not delay using Q and not save E,Q3 to walljump')
 
-Mymenu:dropdown('chase', 'chase target with Q and E', 2, {'None', 'LBM Down', 'Hotkey',})
+-- Mymenu:dropdown('chase', 'chase target with Q and E', 2, {'None', 'LBM Down', 'Hotkey',})
 
 -- Drawing
 Mymenu:menu('draw_setting', 'Drawing')
